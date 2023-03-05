@@ -1,34 +1,33 @@
 package br.com.evd.store.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.evd.store.service.CryptoDataService;
+import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
+import br.com.evd.store.model.dto.AuthenticateModelDTO;
+import br.com.evd.store.service.AuthenticateService;
 
 @RestController
 @RequestMapping("/market")
 public class UserController {
 	
 	@Autowired
-	private CryptoDataService cipherDataService;
+	private AuthenticateService authenticateService;
 	
-	@GetMapping(value = "/user/login", produces = "application/json")
-	public ResponseEntity<String> authenticate() throws UnsupportedEncodingException {		
-		List<byte[]> bs = cipherDataService.encryptData("Danilo", "Danilo");
+	@GetMapping(value = "/user/login", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<ApiDefaultResponseDTO> authenticate(@RequestBody AuthenticateModelDTO request) {		
 		
-		for (byte[] bs2 : bs) {
-			String encrypted = new String(bs2, "UTF8");
-			System.out.println(encrypted);
+		boolean isAuthenticated = authenticateService.authenticateUser(request);
+		
+		if (isAuthenticated) {
+			return ResponseEntity.ok(new ApiDefaultResponseDTO("200", "Authenticate success!"));
 		}
 		
-		return ResponseEntity.ok("Success");
+		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Authenticate Failed!")); 
 	}
 	
 	
