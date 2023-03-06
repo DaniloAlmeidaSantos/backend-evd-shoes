@@ -28,7 +28,8 @@ public class DataSourceRepositoryConfig {
 	@Value("${market.database.maxIdleSize}")
 	private String maxIdleSize;
 
-	private Connection connection = null;
+	private static Connection connection = null;
+	private static HikariDataSource dataSource = null;
 
 	protected Connection openConnection() throws SQLException {
 		HikariConfig config = new HikariConfig();
@@ -39,7 +40,7 @@ public class DataSourceRepositoryConfig {
 		config.addDataSourceProperty("minimumIdle", minIdle);
 		config.addDataSourceProperty("maximumPoolSize", maxIdleSize);
 		
-		HikariDataSource dataSource = new HikariDataSource(config);
+		dataSource = new HikariDataSource(config);
 		connection = dataSource.getConnection();
 		connection.beginRequest();
 		return connection;
@@ -48,5 +49,6 @@ public class DataSourceRepositoryConfig {
 	protected void closeConnection() throws SQLException {
 		connection.endRequest();
 		connection.close();
+		dataSource.close();
 	}
 }
