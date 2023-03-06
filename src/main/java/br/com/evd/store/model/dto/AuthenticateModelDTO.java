@@ -14,6 +14,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class AuthenticateModelDTO {
-	private String username;
+	private String email;
 	private String password;
 }

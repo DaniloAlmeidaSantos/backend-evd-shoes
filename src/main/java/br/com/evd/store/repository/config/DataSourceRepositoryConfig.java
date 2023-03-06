@@ -11,26 +11,26 @@ import com.zaxxer.hikari.HikariDataSource;
 public class DataSourceRepositoryConfig {
 
 	@Value("${market.database.driver}")
-	private static String driver;
+	private String driver;
 
 	@Value("${market.database.url}")
-	private static String url;
+	private String url;
 
 	@Value("${market.database.username}")
-	private static String username;
+	private String username;
 
 	@Value("${market.database.password}")
-	private static String password;
+	private String password;
 	
 	@Value("${market.database.minIdle}")
-	private static String minIdle;
+	private String minIdle;
 	
 	@Value("${market.database.maxIdleSize}")
-	private static String maxIdleSize;
+	private String maxIdleSize;
 
-	private static Connection connection = null;
+	private Connection connection = null;
 
-	protected static Connection openConnection() throws SQLException {
+	protected Connection openConnection() throws SQLException {
 		HikariConfig config = new HikariConfig();
 		config.setJdbcUrl(url);
 		config.setUsername(username);
@@ -45,7 +45,7 @@ public class DataSourceRepositoryConfig {
 		return connection;
 	}
 	
-	protected static void closeConnection() throws SQLException {
+	protected void closeConnection() throws SQLException {
 		connection.endRequest();
 		connection.close();
 	}
