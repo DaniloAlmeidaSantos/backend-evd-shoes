@@ -17,13 +17,13 @@ public enum CacheDefinition implements CacheConfigurable {
 	SERVICE_CACHE(SERVICE_ON_MEMORY_CACHE){
 		@Override
 		public Configuration<Object, Object> getConfiguration() {
-			return CacheFactory.createOnMemoryCache(128, 900000, 1024, 10);
+			return CacheFactory.createOnMemoryCache(128, 900000, 1028, 10);
 		}
 	};
 
 	private final String cacheName;
 	
-	private CacheDefinition(String cacheName) {
+	CacheDefinition(String cacheName) {
 		this.cacheName = cacheName;
 	}
 	

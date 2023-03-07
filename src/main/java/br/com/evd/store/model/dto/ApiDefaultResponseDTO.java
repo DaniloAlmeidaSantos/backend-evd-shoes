@@ -3,17 +3,17 @@ package br.com.evd.store.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Setter
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
-@EqualsAndHashCode
 @ToString
-public class AuthenticateModelDTO {
-	private String email;
-	private String password;
+@EqualsAndHashCode
+public class ApiDefaultResponseDTO {
+
+	private String statusCode;
+	private String message;
+	
 }
