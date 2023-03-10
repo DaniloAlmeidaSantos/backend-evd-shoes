@@ -50,23 +50,23 @@ public class UserRepository extends DataSourceRepositoryConfig {
 		return null;
 	}
 
-	public UserAuthenticatedModelDTO register(UserModelDTO request) {
+	public boolean register(UserModelDTO request) {
 		try {
 			Connection connection = super.openConnection();
 
-			String query = "INSERT INTO TBUSER (CPF, EMAIL, IDTYPE, IDUSER, PASSWORD, USERNAME) VALUES (?, ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO TBUSER (CPF, EMAIL, IDTYPE, PASSWORD, USERNAME) VALUES (?, ?, ?, ?, ?)";
 
 			PreparedStatement stmt = connection.prepareStatement(query);
 			stmt.setString(1, request.getCpf());
 			stmt.setString(2, request.getEmail());
-			stmt.setString(2, request.);
+			stmt.setLong(3, request.getUserType().getTypeId());
+			stmt.setString(4, request.getPassword());
+			stmt.setString(5, request.getUsername());
 
-			ResultSet rs = stmt.executeQuery();
+			int rowsAffected = stmt.executeUpdate();
 
-			while (rs.next()) {
-				return UserAuthenticatedModelDTO.builder()
-						.ecryptedPassword(rs.getString("PASS")).email(rs.getString("EMAIL"))
-						.username(rs.getString("NOME")).userType(rs.getString("TIPOUSU")).build();
+			if (rowsAffected > 0) {
+				return true;
 			}
 		} catch (SQLException e) {
 			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
@@ -78,7 +78,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			}
 		}
 
-		return null;
+		return false;
 	}
 
 }

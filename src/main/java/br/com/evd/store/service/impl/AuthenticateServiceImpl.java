@@ -26,11 +26,11 @@ public class AuthenticateServiceImpl implements AuthenticateService {
 		Optional<Boolean> optional =  cryptoDataService.decryptData(respositoryResponse.getEcryptedPassword())
 				.stream().map(response -> request.getPassword().equals(response)).findFirst();
 		
-		if (optional.isPresent()) {
+		if (optional.get()) {
 			return respositoryResponse;
 		}
 		
-		return respositoryResponse;
+		return null;
 	}
 
 }

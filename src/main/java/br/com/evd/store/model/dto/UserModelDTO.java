@@ -18,6 +18,5 @@ public class UserModelDTO {
 	private String cpf;
 	private String email;
 	private String password;
-	private String group;
 	private UserTypeModelDTO userType;
 }

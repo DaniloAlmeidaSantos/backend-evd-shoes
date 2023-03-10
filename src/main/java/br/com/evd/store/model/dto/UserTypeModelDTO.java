@@ -11,5 +11,5 @@ import lombok.ToString;
 @ToString
 public class UserTypeModelDTO {
     private long typeId;
-    private String typeName;
+    private String groupName;
 }
