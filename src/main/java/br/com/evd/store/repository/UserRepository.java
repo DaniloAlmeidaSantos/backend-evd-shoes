@@ -22,7 +22,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT 	U.USERNAME NOME, U.EMAIL EMAIL, U.PASSWORD PASS, UT.TYPEDESC TIPOUSU");
+			sb.append("SELECT 	U.USERNAME NOME, U.EMAIL EMAIL, U.PASSWORD PASS, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
 			sb.append(" FROM TBUSER U ");
 			sb.append("    JOIN TBUSERTYPE UT ON UT.IDTYPE = U.IDTYPE ");
 			sb.append(" WHERE EMAIL = ?");
@@ -33,9 +33,9 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				return UserAuthenticatedModelDTO.builder()
-						.ecryptedPassword(rs.getString("PASS")).email(rs.getString("EMAIL"))
-						.username(rs.getString("NOME")).userType(rs.getString("TIPOUSU")).build();
+				return UserAuthenticatedModelDTO.builder().ecryptedPassword(rs.getString("PASS"))
+						.email(rs.getString("EMAIL")).username(rs.getString("NOME")).userType(rs.getString("TIPOUSU"))
+						.status(rs.getString("STATUS")).build();
 			}
 		} catch (SQLException e) {
 			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
