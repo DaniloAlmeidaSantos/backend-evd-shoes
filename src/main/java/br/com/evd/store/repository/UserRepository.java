@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.evd.store.model.dto.AuthenticateModelDTO;
 import br.com.evd.store.model.dto.UserAuthenticatedModelDTO;
+import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.repository.config.DataSourceRepositoryConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +29,37 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
 			stmt.setString(1, request.getEmail());
+
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				return UserAuthenticatedModelDTO.builder()
+						.ecryptedPassword(rs.getString("PASS")).email(rs.getString("EMAIL"))
+						.username(rs.getString("NOME")).userType(rs.getString("TIPOUSU")).build();
+			}
+		} catch (SQLException e) {
+			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
+		} finally {
+			try {
+				super.closeConnection();
+			} catch (SQLException e) {
+				log.error("[ERROR] Error to close connection");
+			}
+		}
+
+		return null;
+	}
+
+	public UserAuthenticatedModelDTO register(UserModelDTO request) {
+		try {
+			Connection connection = super.openConnection();
+
+			String query = "INSERT INTO TBUSER (CPF, EMAIL, IDTYPE, IDUSER, PASSWORD, USERNAME) VALUES (?, ?, ?, ?, ?, ?)";
+
+			PreparedStatement stmt = connection.prepareStatement(query);
+			stmt.setString(1, request.getCpf());
+			stmt.setString(2, request.getEmail());
+			stmt.setString(2, request.);
 
 			ResultSet rs = stmt.executeQuery();
 
