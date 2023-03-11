@@ -57,7 +57,6 @@ public class CryptoDataServiceImpl implements CryptoDataService {
 				byte[] encoded = Base64.getDecoder().decode(encryptedData);
 				byte[] cipherResponse = cipher.doFinal(encoded);
 				String decryptedResponseToString = new String(cipherResponse);
-//				Base64.getEncoder().encodeToString(cipherResponse)
 				deciphereddata.add(decryptedResponseToString);
 			} catch (IllegalBlockSizeException e) {
 				log.error("[ERROR] Error to encrypt data: {} ", e.getMessage());

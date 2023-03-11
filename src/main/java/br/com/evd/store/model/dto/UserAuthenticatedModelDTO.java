@@ -19,4 +19,5 @@ public class UserAuthenticatedModelDTO {
 	private String userType;
 	private String username;
 	private String email;
+	private String status;
 }
