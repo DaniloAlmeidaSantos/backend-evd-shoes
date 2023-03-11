@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.evd.store.model.dto.AuthenticateModelDTO;
 import br.com.evd.store.model.dto.UserAuthenticatedModelDTO;
+import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.repository.config.DataSourceRepositoryConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +22,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT 	U.USERNAME NOME, U.EMAIL EMAIL, U.PASSWORD PASS, UT.TYPEDESC TIPOUSU");
+			sb.append("SELECT 	U.USERNAME NOME, U.EMAIL EMAIL, U.PASSWORD PASS, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
 			sb.append(" FROM TBUSER U ");
 			sb.append("    JOIN TBUSERTYPE UT ON UT.IDTYPE = U.IDTYPE ");
 			sb.append(" WHERE EMAIL = ?");
@@ -32,9 +33,9 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				return UserAuthenticatedModelDTO.builder()
-						.ecryptedPassword(rs.getString("PASS")).email(rs.getString("EMAIL"))
-						.username(rs.getString("NOME")).userType(rs.getString("TIPOUSU")).build();
+				return UserAuthenticatedModelDTO.builder().ecryptedPassword(rs.getString("PASS"))
+						.email(rs.getString("EMAIL")).username(rs.getString("NOME")).userType(rs.getString("TIPOUSU"))
+						.status(rs.getString("STATUS")).build();
 			}
 		} catch (SQLException e) {
 			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
@@ -47,6 +48,37 @@ public class UserRepository extends DataSourceRepositoryConfig {
 		}
 
 		return null;
+	}
+
+	public boolean register(UserModelDTO request) {
+		try {
+			Connection connection = super.openConnection();
+
+			String query = "INSERT INTO TBUSER (CPF, EMAIL, IDTYPE, PASSWORD, USERNAME) VALUES (?, ?, ?, ?, ?)";
+
+			PreparedStatement stmt = connection.prepareStatement(query);
+			stmt.setString(1, request.getCpf());
+			stmt.setString(2, request.getEmail());
+			stmt.setLong(3, request.getUserType().getTypeId());
+			stmt.setString(4, request.getPassword());
+			stmt.setString(5, request.getUsername());
+
+			int rowsAffected = stmt.executeUpdate();
+
+			if (rowsAffected > 0) {
+				return true;
+			}
+		} catch (SQLException e) {
+			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
+		} finally {
+			try {
+				super.closeConnection();
+			} catch (SQLException e) {
+				log.error("[ERROR] Error to close connection");
+			}
+		}
+
+		return false;
 	}
 
 }
