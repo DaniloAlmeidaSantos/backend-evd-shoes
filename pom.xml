@@ -12,12 +12,12 @@
 
 	<groupId>br.com.evd</groupId>
 	<artifactId>store</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>store</name>
 	<description>Backend to Website shoes store</description>
 
 	<properties>
-		<java.version>16</java.version>
+		<java.version>11</java.version>
 	</properties>
 
 	<dependencies>
