@@ -8,12 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
 import br.com.evd.store.model.dto.AuthenticateModelDTO;
+import br.com.evd.store.model.dto.UpdateStatusModelDTO;
 import br.com.evd.store.model.dto.UserAuthenticatedModelDTO;
 import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.service.AuthenticateService;
@@ -57,6 +60,54 @@ public class UserController {
 		}
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to register user."));
+	}
+
+	@GetMapping(value = "/user/list", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<List<UserModelDTO>> getListUsers() {
+
+		List<UserModelDTO> userDataList = userService.getUsers();
+
+		if (userDataList != null) {
+			return ResponseEntity.ok(userDataList);
+		}
+		return ResponseEntity.badRequest().body(null);
+	}
+
+	@GetMapping(value = "/user", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<UserModelDTO> getUser(@RequestParam long id) {
+		UserModelDTO userData = userService.getUser(id);
+
+		if (userData != null) {
+			return ResponseEntity.ok(userData);
+		}
+
+		return ResponseEntity.badRequest().body(null);
+	}
+
+	@PutMapping(value = "/user/update", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<ApiDefaultResponseDTO> update(@RequestBody UserModelDTO request) {
+
+		boolean isUpdated = userService.updateUser(request);
+
+		if (isUpdated) {
+			return new ResponseEntity<ApiDefaultResponseDTO>(
+					new ApiDefaultResponseDTO("200", "User " + request.getUsername() + " updated"), HttpStatus.OK);
+		}
+
+		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to update user."));
+	}
+
+	@PutMapping(value = "/user/update/status", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<ApiDefaultResponseDTO> updateStatus(@RequestBody UpdateStatusModelDTO request) {
+
+		boolean isUpdated = userService.updateStatus(request);
+
+		if (isUpdated) {
+			return new ResponseEntity<ApiDefaultResponseDTO>(
+					new ApiDefaultResponseDTO("200", "User updated"), HttpStatus.OK);
+		}
+
+		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to update user."));
 	}
 
 	// Testar a encriptação

@@ -14,10 +14,13 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class UserModelDTO {
+	private long idUser;
 	private String username;
 	private String cpf;
 	private String email;
 	private String password;
 	private String status;
 	private UserTypeModelDTO userType;
+	
+	private boolean isNewPassword; // Para alteração de senha
 }
