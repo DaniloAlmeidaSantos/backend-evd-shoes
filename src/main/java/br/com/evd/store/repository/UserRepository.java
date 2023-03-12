@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import br.com.evd.store.model.dto.AuthenticateModelDTO;
+import br.com.evd.store.model.dto.UpdateStatusModelDTO;
 import br.com.evd.store.model.dto.UserAuthenticatedModelDTO;
 import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.model.dto.UserTypeModelDTO;
@@ -192,18 +193,19 @@ public class UserRepository extends DataSourceRepositoryConfig {
 		return false;
 	}
 
-	public boolean updateStatus(UserModelDTO request) {
+	public boolean updateStatus(UpdateStatusModelDTO request) {
 
 		try {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("UPDATE USER ");
-			sb.append("SET STATUS = ?");
-			sb.append("WHERE IDUSER = ?");
+			sb.append(" SET STATUS = ?");
+			sb.append(" WHERE IDUSER = ?");
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
 			stmt.setString(1, request.getStatus());
+			stmt.setLong(2, request.getUserId());
 
 			int rowsAffected = stmt.executeUpdate();
 

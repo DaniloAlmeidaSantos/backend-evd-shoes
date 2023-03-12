@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.evd.store.model.dto.UpdateStatusModelDTO;
 import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.repository.UserRepository;
 import br.com.evd.store.service.CryptoDataService;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean updateStatus(UserModelDTO request) {
+	public boolean updateStatus(UpdateStatusModelDTO request) {
 		return repository.updateStatus(request);
 	}
 

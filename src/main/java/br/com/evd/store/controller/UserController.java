@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
 import br.com.evd.store.model.dto.AuthenticateModelDTO;
+import br.com.evd.store.model.dto.UpdateStatusModelDTO;
 import br.com.evd.store.model.dto.UserAuthenticatedModelDTO;
 import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.service.AuthenticateService;
@@ -94,14 +95,14 @@ public class UserController {
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to update user."));
 	}
 
-	@PutMapping(value = "/user/update", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<ApiDefaultResponseDTO> updateStatus(@RequestBody UserModelDTO request) {
+	@PutMapping(value = "/user/update/status", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<ApiDefaultResponseDTO> updateStatus(@RequestBody UpdateStatusModelDTO request) {
 
 		boolean isUpdated = userService.updateStatus(request);
 
 		if (isUpdated) {
 			return new ResponseEntity<ApiDefaultResponseDTO>(
-					new ApiDefaultResponseDTO("200", "User " + request.getUsername() + " updated"), HttpStatus.OK);
+					new ApiDefaultResponseDTO("200", "User updated"), HttpStatus.OK);
 		}
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to update user."));
