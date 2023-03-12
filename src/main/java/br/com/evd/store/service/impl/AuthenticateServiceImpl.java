@@ -35,9 +35,11 @@ public class AuthenticateServiceImpl implements AuthenticateService {
 				.stream().map(response -> request.getPassword().equals(response)).findFirst();
 		
 		if (optional.get()) {
+			log.info("User {} authenticated", respositoryResponse.getUsername());
 			return respositoryResponse;
 		}
 		
+		log.info("User {} not authenticated", respositoryResponse.getUsername());
 		return null;
 	}
 
