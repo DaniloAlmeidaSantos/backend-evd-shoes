@@ -47,14 +47,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserModelDTO getUser(UserModelDTO request) {
-		return repository.getUser(request);
-	}
-
-	@Override
-	public UserModelDTO getUser() {
-		// TODO Auto-generated method stub
-		return null;
+	public UserModelDTO getUser(long id) {
+		return repository.getUser(id);
 	}
 
 }

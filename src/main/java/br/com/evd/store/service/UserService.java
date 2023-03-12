@@ -17,7 +17,5 @@ public interface UserService {
 
 	List<UserModelDTO> getUsers();
 
-	UserModelDTO getUser();
-
-	UserModelDTO getUser(UserModelDTO request);
+	UserModelDTO getUser(long id);
 }

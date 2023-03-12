@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
@@ -69,9 +70,9 @@ public class UserController {
 		return ResponseEntity.badRequest().body(null);
 	}
 
-	@GetMapping(value = "/user/update", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<UserModelDTO> getUser(@RequestBody UserModelDTO request) {
-		UserModelDTO userData = userService.getUser(request);
+	@GetMapping(value = "/user", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<UserModelDTO> getUser(@RequestParam long id) {
+		UserModelDTO userData = userService.getUser(id);
 
 		if (userData != null) {
 			return ResponseEntity.ok(userData);

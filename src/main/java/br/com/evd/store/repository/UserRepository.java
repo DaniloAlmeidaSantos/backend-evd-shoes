@@ -122,7 +122,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 		return list;
 	}
 
-	public UserModelDTO getUser(UserModelDTO request) {
+	public UserModelDTO getUser(long id) {
 		try {
 			Connection connection = super.openConnection();
 
@@ -133,7 +133,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			sb.append(" WHERE IDUSER =  ?");
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
-			stmt.setLong(1, request.getIdUser());
+			stmt.setLong(1, id);
 
 			ResultSet rs = stmt.executeQuery();
 
