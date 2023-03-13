@@ -62,7 +62,7 @@ public class UserController {
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to register user."));
 	}
 
-	@GetMapping(value = "/user/list", consumes = "application/json", produces = "application/json")
+	@GetMapping(value = "/user/list", produces = "application/json")
 	public ResponseEntity<List<UserModelDTO>> getListUsers() {
 
 		List<UserModelDTO> userDataList = userService.getUsers();
@@ -73,7 +73,7 @@ public class UserController {
 		return ResponseEntity.badRequest().body(null);
 	}
 
-	@GetMapping(value = "/user", consumes = "application/json", produces = "application/json")
+	@GetMapping(value = "/user", produces = "application/json")
 	public ResponseEntity<UserModelDTO> getUser(@RequestParam long id) {
 		UserModelDTO userData = userService.getUser(id);
 

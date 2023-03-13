@@ -27,7 +27,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append(
-					"SELECT 	U.USERNAME NOME, U.EMAIL EMAIL, U.PASSWORD PASS, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
+					"SELECT U.USERNAME NOME, U.EMAIL EMAIL, U.PASSWORD PASS, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
 			sb.append(" FROM TBUSER U ");
 			sb.append("    JOIN TBUSERTYPE UT ON UT.IDTYPE = U.IDTYPE ");
 			sb.append(" WHERE EMAIL = ?");
@@ -94,7 +94,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT 	U.USERNAME NOME,  U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
+			sb.append("SELECT U.USERNAME NOME,  U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
 			sb.append(" FROM TBUSER U ");
 			sb.append("    JOIN TBUSERTYPE UT ON UT.IDTYPE = U.IDTYPE ");
 
@@ -128,10 +128,10 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT 	U.USERNAME NOME, U.CPF CPF, U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
+			sb.append("SELECT U.USERNAME NOME, U.CPF CPF, U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU, UT.IDTYPE IDTIPOUSU, U.STATUS STATUS, U.PASSWORD SENHA ");
 			sb.append(" FROM TBUSER U ");
 			sb.append("    JOIN TBUSERTYPE UT ON UT.IDTYPE = U.IDTYPE ");
-			sb.append(" WHERE IDUSER =  ?");
+			sb.append(" WHERE U.IDUSER =  ?");
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
 			stmt.setLong(1, id);
@@ -143,8 +143,12 @@ public class UserRepository extends DataSourceRepositoryConfig {
 				dto.setUsername(rs.getString("NOME"));
 				dto.setCpf(rs.getString("CPF"));
 				dto.setEmail(rs.getString("EMAIL"));
-				dto.setUserType(new UserTypeModelDTO(0L, rs.getString("TIPOUSU")));
+				dto.setUserType(new UserTypeModelDTO(rs.getLong("IDTIPOUSU"), rs.getString("TIPOUSU")));
 				dto.setStatus(rs.getString("STATUS"));
+				dto.setPassword(rs.getString("SENHA"));
+				
+				log.info("[INFO] User {} founded success", id);
+				
 				return dto;
 			}
 		} catch (SQLException e) {
@@ -166,14 +170,15 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("UPDATE USER ");
-			sb.append("SET USERNAME = ?, CPF = ?, PASSWORD = ? ");
+			sb.append("SET USERNAME = ?, CPF = ?, PASSWORD = ?, IDTYPE = ? ");
 			sb.append("WHERE IDUSER = ?");
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
 			stmt.setString(1, request.getUsername());
 			stmt.setString(2, request.getCpf());
 			stmt.setString(3, request.getPassword());
-			stmt.setLong(4, request.getIdUser());
+			stmt.setLong(4, request.getUserType().getTypeId());
+			stmt.setLong(5, request.getIdUser());
 
 			int rowsAffected = stmt.executeUpdate();
 

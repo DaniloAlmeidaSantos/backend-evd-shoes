@@ -1,5 +1,9 @@
 package br.com.evd.store.model.dto;
 
+import java.io.Serializable;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class UserModelDTO {
+public class UserModelDTO{	
 	private long idUser;
 	private String username;
 	private String cpf;

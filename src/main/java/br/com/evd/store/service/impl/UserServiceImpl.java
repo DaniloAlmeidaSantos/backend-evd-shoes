@@ -47,7 +47,6 @@ public class UserServiceImpl implements UserService {
 		return repository.getUserList();
 	}
 
-	@Override
 	public UserModelDTO getUser(long id) {
 		return repository.getUser(id);
 	}
