@@ -22,7 +22,9 @@ import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.service.AuthenticateService;
 import br.com.evd.store.service.CryptoDataService;
 import br.com.evd.store.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/backoffice")
 @CrossOrigin(origins = "*")
@@ -54,6 +56,7 @@ public class UserController {
 
 		boolean isRegistered = userService.addUser(request);
 
+		log.info("[ADD USER] User add ? {} ", isRegistered);
 		if (isRegistered) {
 			return new ResponseEntity<ApiDefaultResponseDTO>(
 					new ApiDefaultResponseDTO("201", "User " + request.getUsername() + " created"), HttpStatus.CREATED);

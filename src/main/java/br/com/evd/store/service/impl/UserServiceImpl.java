@@ -10,7 +10,9 @@ import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.repository.UserRepository;
 import br.com.evd.store.service.CryptoDataService;
 import br.com.evd.store.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class UserServiceImpl implements UserService {
 
@@ -21,7 +23,7 @@ public class UserServiceImpl implements UserService {
 	private UserRepository repository;
 
 	public boolean addUser(UserModelDTO request) {
-
+		log.info("[REGISTER USER] Encrypting new password.");
 		List<String> encrypteds = cryptoDataService.encryptData(request.getPassword());
 		request.setPassword(encrypteds.get(0));
 
@@ -31,9 +33,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean updateUser(UserModelDTO request) {
 		if (request.isNewPassword()) {
+			log.info("[UPDATE USER] Encrypting new password.");
 			List<String> encrypteds = cryptoDataService.encryptData(request.getPassword());
 			request.setPassword(encrypteds.get(0));
 		}
+		log.info("[UPDATE USER] Updating user {}", request);
 		return repository.updateUser(request);
 	}
 

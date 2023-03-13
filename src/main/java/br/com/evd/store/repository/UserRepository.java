@@ -71,6 +71,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			int rowsAffected = stmt.executeUpdate();
 
 			if (rowsAffected > 0) {
+				log.info("[ADD USER] User {} registered.", request.getEmail());
 				return true;
 			}
 		} catch (SQLException e) {
@@ -82,7 +83,8 @@ public class UserRepository extends DataSourceRepositoryConfig {
 				log.error("[ERROR] Error to close connection");
 			}
 		}
-
+		
+		log.info("[ERROR] Error to register user {}.", request.getEmail());
 		return false;
 	}
 
@@ -169,7 +171,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("UPDATE USER ");
+			sb.append("UPDATE TBUSER ");
 			sb.append("SET USERNAME = ?, CPF = ?, PASSWORD = ?, IDTYPE = ? ");
 			sb.append("WHERE IDUSER = ?");
 
@@ -204,7 +206,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("UPDATE USER ");
+			sb.append("UPDATE TBUSER ");
 			sb.append(" SET STATUS = ?");
 			sb.append(" WHERE IDUSER = ?");
 
