@@ -106,7 +106,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			while (rs.next()) {
 				UserModelDTO dto = new UserModelDTO();
-				dto.setIdUser(rs.getLong("USERID));
+				dto.setIdUser(rs.getLong("USERID"));
 				dto.setUsername(rs.getString("NOME"));
 				dto.setEmail(rs.getString("EMAIL"));
 				dto.setUserType(new UserTypeModelDTO(0L, rs.getString("TIPOUSU")));
