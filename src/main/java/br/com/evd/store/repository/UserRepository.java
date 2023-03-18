@@ -96,7 +96,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT U.USERNAME NOME,  U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
+			sb.append("SELECT U.IDUSER USERID, U.USERNAME NOME,  U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
 			sb.append(" FROM TBUSER U ");
 			sb.append("    JOIN TBUSERTYPE UT ON UT.IDTYPE = U.IDTYPE ");
 
@@ -106,6 +106,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			while (rs.next()) {
 				UserModelDTO dto = new UserModelDTO();
+				dto.setIdUser(rs.getLong("USERID"));
 				dto.setUsername(rs.getString("NOME"));
 				dto.setEmail(rs.getString("EMAIL"));
 				dto.setUserType(new UserTypeModelDTO(0L, rs.getString("TIPOUSU")));
