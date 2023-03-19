@@ -20,7 +20,6 @@ import br.com.evd.store.model.dto.UpdateStatusModelDTO;
 import br.com.evd.store.model.dto.UserAuthenticatedModelDTO;
 import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.service.AuthenticateService;
-import br.com.evd.store.service.CryptoDataService;
 import br.com.evd.store.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,9 +34,6 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private CryptoDataService cryptoDataService;
 
 	@PostMapping(value = "/user/login", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<UserAuthenticatedModelDTO> authenticate(@RequestBody AuthenticateModelDTO request) {
@@ -112,15 +108,4 @@ public class UserController {
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to update user."));
 	}
-
-	// Testar a encriptação
-	@GetMapping(value = "/teste")
-	public ResponseEntity<ApiDefaultResponseDTO> authenticate() {
-		List<String> passwordHashed = cryptoDataService.encryptData("12345");
-		List<String> passwordDecrypted = cryptoDataService.decryptData(passwordHashed.get(0));
-		System.out.println(passwordDecrypted.toString());
-
-		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", passwordHashed.get(0)));
-	}
-
 }

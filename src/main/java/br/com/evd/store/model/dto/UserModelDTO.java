@@ -2,8 +2,6 @@ package br.com.evd.store.model.dto;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,7 +15,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class UserModelDTO{	
+public final class UserModelDTO implements Serializable {	
+	private static final long serialVersionUID = 5217920246895673323L;
+	
 	private long idUser;
 	private String username;
 	private String cpf;
@@ -25,6 +25,5 @@ public class UserModelDTO{
 	private String password;
 	private String status;
 	private UserTypeModelDTO userType;
-	
 	private boolean isNewPassword; // Para alteração de senha
 }
