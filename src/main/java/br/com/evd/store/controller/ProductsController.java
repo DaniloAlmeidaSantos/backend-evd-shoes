@@ -9,12 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
 import br.com.evd.store.model.dto.ProductsModelDTO;
+import br.com.evd.store.model.dto.ProductsStatusRequestModelDTO;
+import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.service.ProductsService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,11 +47,36 @@ public class ProductsController {
 	}
 	
 	@GetMapping(value = "/products", produces = "application/json")
-	public ResponseEntity<List<ProductsModelDTO>> getAllProducts() {
-		List<ProductsModelDTO> response = productsService.getAllProducts();
+	public ResponseEntity<List<ProductsModelDTO>> getAllProducts(@RequestParam(required = false) String nameProduct) {
+		List<ProductsModelDTO> response = productsService.getAllProducts(nameProduct);
 		
 		if (response != null) {
 			return ResponseEntity.ok(response);
+		}
+		
+		return ResponseEntity.badRequest().body(null);
+	}
+	
+	@PutMapping(value = "/products/status", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<ApiDefaultResponseDTO> updateStatus(@RequestBody ProductsStatusRequestModelDTO request) {
+		log.info("[INFO] Updating product status.");
+		boolean isCreated = productsService.updateStatus(request);
+		
+		if (isCreated) {
+			log.info("[INFO] Product updated");
+			return new ResponseEntity<ApiDefaultResponseDTO>(
+					new ApiDefaultResponseDTO("200", "Product status " + request.getIdProduct() + " updated"), HttpStatus.OK);
+		}
+
+		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to update product."));
+	}
+	
+	@GetMapping(value = "/product", produces = "application/json")
+	public ResponseEntity<ProductsModelDTO> getProduct(@RequestParam long id) {
+		ProductsModelDTO product = productsService.getProduct(id);
+		
+		if (product != null) {
+			return ResponseEntity.ok(product);
 		}
 		
 		return ResponseEntity.badRequest().body(null);
