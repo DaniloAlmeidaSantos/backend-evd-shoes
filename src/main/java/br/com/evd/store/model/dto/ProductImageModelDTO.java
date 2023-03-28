@@ -23,6 +23,5 @@ public final class ProductImageModelDTO implements Serializable {
 	private String file;
 	private String mimeType;
 	private String name;
-	@JsonIgnore
 	private long idProduct;
 }

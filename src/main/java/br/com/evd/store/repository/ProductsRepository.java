@@ -237,7 +237,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append(" SELECT ");
-			sb.append(" 	IDIMAGE ID, NAME NOME, FILE IMAGEM, MIMETYPE  MIME ");
+			sb.append(" 	IDIMAGE ID, NAME NOME, FILE IMAGEM, MIMETYPE  MIME, IDPRODUCT IDPRODUTO ");
 			sb.append(" FROM TB_PRODUCTS_IMAGE ");
 			sb.append(" WHERE IDPRODUCT = ? ");
 			
@@ -252,6 +252,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 				dto.setIdImage(rs.getLong("ID"));
 				dto.setName(rs.getString("NOME"));
 				dto.setMimeType(rs.getString("MIME"));
+				dto.setIdProduct(rs.getLong("IDPRODUTO"));
 				images.add(dto);
 			}
 			
@@ -267,5 +268,67 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 		}
 
 		return images;
+	}
+	
+	public boolean updateProduct(ProductsModelDTO request) {
+		try {
+			Connection connection = super.openConnection();
+
+			String query = "UPDATE TBPRODUCTS SET BRAND = ?, COST = ?, DESCRIPTION = ?, NAMEPRODUCT = ?, RATIO = ? WHERE IDPRODUCT = ?";
+
+			PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			stmt.setString(1, request.getBrand());
+			stmt.setDouble(2, request.getCost());
+			stmt.setString(3, request.getDescription());
+			stmt.setString(4, request.getNameProduct());
+			stmt.setDouble(5, request.getRatio());
+			stmt.setLong(6, request.getIdProduct());
+
+			int rowsAffected = stmt.executeUpdate();
+
+			if (rowsAffected > 0) {
+				log.info("[UPDATE PRODUCT] Product {} updated.", request.getNameProduct());
+				this.updateStock(request.getQuantity(), request.getIdProduct());
+				return true;
+			}
+		} catch (SQLException e) {
+			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
+		} finally {
+			try {
+				super.closeConnection();
+			} catch (SQLException e) {
+				log.error("[ERROR] Error to close connection");
+			}
+		}
+		
+		return false;
+	}
+	
+	private void updateStock(int quantity, long idProduct) {
+		try {
+			Connection connection = super.openConnection();
+
+			String query = "UPDATE TBSTOCK SET AMOUNT = ? WHERE IDPRODUCT = ?";
+
+			PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			stmt.setInt(1, quantity);
+			stmt.setLong(2, idProduct);
+
+			int rowsAffected = stmt.executeUpdate();
+
+			if (rowsAffected > 0) {
+				log.info("[UPDATE STOCK] Stock updated.");
+			} else {
+				log.info("[ERROR] Error to update stock.");
+			}
+		} catch (SQLException e) {
+			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
+		} finally {
+			try {
+				super.closeConnection();
+			} catch (SQLException e) {
+				log.error("[ERROR] Error to close connection");
+			}
+		}
 	}
 }

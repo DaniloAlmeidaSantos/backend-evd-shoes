@@ -64,27 +64,69 @@ public class BackofficeProductsServiceImpl implements ProductsService {
 	@Override
 	public boolean updateStatus(ProductsStatusRequestModelDTO request) {
 		boolean isUpdated = productsRepository.updateStatus(request);
-		
+
 		if (isUpdated) {
 			log.info("[INFO] Product status updated");
 			return true;
 		}
-		
+
 		return false;
 	}
 
+	public boolean updateProduct(ProductsModelDTO request) {
+		log.info("[INFO] Updating product {} ", request.getNameProduct());
+		boolean isUpdated = productsRepository.updateProduct(request);
+
+		if (isUpdated) {
+			List<ProductImageModelDTO> images = productsRepository.getImages(request.getIdProduct());
+
+			if (images.size() == 0) {
+				for (ProductImageModelDTO image : request.getProductImages()) {
+					try {
+						log.info("[INFO] Inserting new images");
+						String[] file = Base64Utils.replaceBase64(image.getFile());
+						image.setMimeType(file[0]);
+						image.setIdProduct(request.getIdProduct());
+						productsRepository.addImage(image);
+					} catch (Exception e) {
+						log.error("[ERROR] Error to register image.");
+					}
+				}
+			} else {
+				for (ProductImageModelDTO newImage : request.getProductImages()) {
+					for (ProductImageModelDTO image : images) {
+						if (image.getIdProduct() != newImage.getIdProduct()) {
+							try {
+								log.info("[INFO] Inserting new images");
+								String[] file = Base64Utils.replaceBase64(newImage.getFile());
+								newImage.setMimeType(file[0]);
+								newImage.setIdProduct(request.getIdProduct());
+								productsRepository.addImage(newImage);
+							} catch (Exception e) {
+								log.error("[ERROR] Error to register image.");
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		return isUpdated;
+
+	}
+
 	@Override
-	@Cacheable(value = SERVICE_ON_MEMORY_CACHE, key = "#id", unless = "#result == null")
 	public ProductsModelDTO getProduct(long id) {
-		
+
 		ProductsModelDTO product = productsRepository.getProduct(id);
-		
+
 		if (product != null) {
 			List<ProductImageModelDTO> images = productsRepository.getImages(id);
 			product.setProductImages(images);
 			return product;
 		}
-		
+
 		return null;
 	}
 }

@@ -10,4 +10,5 @@ public interface ProductsService {
 	boolean addProduct(ProductsModelDTO request); 
 	boolean updateStatus(ProductsStatusRequestModelDTO request);
 	ProductsModelDTO getProduct(long id);
+	boolean updateProduct(ProductsModelDTO request);
 }

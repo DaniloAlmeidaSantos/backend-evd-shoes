@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
 import br.com.evd.store.model.dto.ProductsModelDTO;
 import br.com.evd.store.model.dto.ProductsStatusRequestModelDTO;
-import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.service.ProductsService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,5 +79,19 @@ public class ProductsController {
 		}
 		
 		return ResponseEntity.badRequest().body(null);
+	}
+	
+	@PutMapping(value = "/product/update", produces = "application/json", consumes = "application/json")
+	public ResponseEntity<ApiDefaultResponseDTO> updateProduct(@RequestBody ProductsModelDTO request) {
+		log.info("[INFO] Updating product.");
+		boolean isCreated = productsService.updateProduct(request);
+		
+		if (isCreated) {
+			log.info("[INFO] Product update");
+			return new ResponseEntity<ApiDefaultResponseDTO>(
+					new ApiDefaultResponseDTO("200", "Product " + request.getNameProduct() + " updated"), HttpStatus.OK);
+		}
+
+		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to register product."));
 	}
 }
