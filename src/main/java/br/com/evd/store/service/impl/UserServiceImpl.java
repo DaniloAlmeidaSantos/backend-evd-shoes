@@ -2,7 +2,10 @@ package br.com.evd.store.service.impl;
 
 import java.util.List;
 
+import static br.com.evd.store.cache.CacheConstants.SERVICE_ON_MEMORY_CACHE;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import br.com.evd.store.model.dto.UpdateStatusModelDTO;
@@ -43,16 +46,28 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean updateStatus(UpdateStatusModelDTO request) {
-		return repository.updateStatus(request);
+		if (request != null) {
+			return repository.updateStatus(request);
+		}
+		
+		return false;
 	}
 
-	@Override
 	public List<UserModelDTO> getUsers() {
-		return repository.getUserList();
+		List<UserModelDTO> data = repository.getUserList();
+		
+		if (data.size() > 0) {
+			return data;
+		}
+		
+		log.info("[ALERT] Not found users in database");
+		return null;
 	}
 
+	@Cacheable(value = SERVICE_ON_MEMORY_CACHE, key = "#id", unless = "#result == null")
 	public UserModelDTO getUser(long id) {
-		return repository.getUser(id);
+		UserModelDTO response = repository.getUser(id);
+		return response;
 	}
 
 }
