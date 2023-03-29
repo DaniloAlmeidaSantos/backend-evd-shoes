@@ -64,7 +64,6 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
-	@Cacheable(value = SERVICE_ON_MEMORY_CACHE, key = "#id", unless = "#result == null")
 	public UserModelDTO getUser(long id) {
 		UserModelDTO response = repository.getUser(id);
 		return response;
