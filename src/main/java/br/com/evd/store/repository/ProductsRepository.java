@@ -81,13 +81,14 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 		try {
 			Connection connection = super.openConnection();
 
-			String query = "INSERT INTO TB_PRODUCTS_IMAGE (FILE, IDPRODUCT, MIMETYPE, NAME) VALUES (?, ?, ?, ?)";
+			String query = "INSERT INTO TB_PRODUCTS_IMAGE (FILE, FILEDEFAULT, IDPRODUCT, MIMETYPE, NAME) VALUES (?, ?, ?, ?, ?)";
 
 			PreparedStatement stmt = connection.prepareStatement(query);
 			stmt.setString(1, request.getFile());
-			stmt.setLong(2, request.getIdProduct());
-			stmt.setString(3, request.getMimeType());
-			stmt.setString(4, request.getName());
+			stmt.setString(2, request.getFileDefault());
+			stmt.setLong(3, request.getIdProduct());
+			stmt.setString(4, request.getMimeType());
+			stmt.setString(5, request.getName());
 
 			int rowsAffected = stmt.executeUpdate();
 
@@ -237,7 +238,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append(" SELECT ");
-			sb.append(" 	IDIMAGE ID, NAME NOME, FILE IMAGEM, MIMETYPE  MIME, IDPRODUCT IDPRODUTO ");
+			sb.append(" 	IDIMAGE ID, NAME NOME, FILE IMAGEM, FILEDEFAULT IMAGEMPRINCIPAL, MIMETYPE  MIME, IDPRODUCT IDPRODUTO ");
 			sb.append(" FROM TB_PRODUCTS_IMAGE ");
 			sb.append(" WHERE IDPRODUCT = ? ");
 			
@@ -249,6 +250,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 			while (rs.next()) {
 				ProductImageModelDTO dto = new ProductImageModelDTO();
 				dto.setFile(rs.getString("IMAGEM"));
+				dto.setFile(rs.getString("IMAGEMPRINCIPAL"));
 				dto.setIdImage(rs.getLong("ID"));
 				dto.setName(rs.getString("NOME"));
 				dto.setMimeType(rs.getString("MIME"));

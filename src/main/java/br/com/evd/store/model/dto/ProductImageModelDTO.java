@@ -21,6 +21,7 @@ public final class ProductImageModelDTO implements Serializable {
 	private static final long serialVersionUID = 764596638721870912L;
 	private long idImage;
 	private String file;
+	private String fileDefault;
 	private String mimeType;
 	private String name;
 	private long idProduct;
