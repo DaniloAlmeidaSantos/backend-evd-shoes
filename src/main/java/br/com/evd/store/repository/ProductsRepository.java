@@ -250,7 +250,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 			while (rs.next()) {
 				ProductImageModelDTO dto = new ProductImageModelDTO();
 				dto.setFile(rs.getString("IMAGEM"));
-				dto.setFile(rs.getString("IMAGEMPRINCIPAL"));
+				dto.setFileDefault(rs.getString("IMAGEMPRINCIPAL"));
 				dto.setIdImage(rs.getLong("ID"));
 				dto.setName(rs.getString("NOME"));
 				dto.setMimeType(rs.getString("MIME"));
