@@ -20,6 +20,7 @@ import lombok.ToString;
 public final class ProductImageModelDTO implements Serializable {
 	private static final long serialVersionUID = 764596638721870912L;
 	private long idImage;
+	private String fileDefault;
 	private String file;
 	private String mimeType;
 	private String name;
