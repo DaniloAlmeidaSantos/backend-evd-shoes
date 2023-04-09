@@ -112,7 +112,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 		try {
 			Connection connection = super.openConnection();
 
-			String query = "UPDATE TB_PRODUCTS_IMAGE FILE = ?, MIMETYPE = ?, NAME = ?, FILEDEFAULT = ? WHERE IDPRODUCT = ?";
+			String query = "UPDATE TB_PRODUCTS_IMAGE SET FILE = ?, MIMETYPE = ?, NAME = ?, FILEDEFAULT = ? WHERE IDPRODUCT = ?";
 
 			PreparedStatement stmt = connection.prepareStatement(query);
 			stmt.setString(1, request.getFile());
