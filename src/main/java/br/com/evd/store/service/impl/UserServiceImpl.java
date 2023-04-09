@@ -2,10 +2,7 @@ package br.com.evd.store.service.impl;
 
 import java.util.List;
 
-import static br.com.evd.store.cache.CacheConstants.SERVICE_ON_MEMORY_CACHE;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import br.com.evd.store.model.dto.UpdateStatusModelDTO;

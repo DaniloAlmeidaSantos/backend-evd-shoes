@@ -92,16 +92,19 @@ public class BackofficeProductsServiceImpl implements ProductsService {
 			} else {
 				for (ProductImageModelDTO newImage : request.getProductImages()) {
 					for (ProductImageModelDTO image : images) {
-						if (image.getIdProduct() != newImage.getIdProduct()) {
-							try {
-								log.info("[INFO] Inserting new images");
-								String[] file = Base64Utils.replaceBase64(newImage.getFile());
-								newImage.setMimeType(file[0]);
-								newImage.setIdProduct(request.getIdProduct());
+						try {
+							log.info("[INFO] Inserting new images");
+							String[] file = Base64Utils.replaceBase64(newImage.getFile());
+							newImage.setMimeType(file[0]);
+							newImage.setIdProduct(request.getIdProduct());
+							
+							if (image.getIdProduct() != newImage.getIdProduct()) {
 								productsRepository.addImage(newImage);
-							} catch (Exception e) {
-								log.error("[ERROR] Error to register image.");
+							} else {
+								productsRepository.updateImage(newImage);
 							}
+						} catch (Exception e) {
+							log.error("[ERROR] Error to register image.");
 						}
 					}
 				}
