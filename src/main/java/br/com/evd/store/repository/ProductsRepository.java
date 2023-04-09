@@ -94,6 +94,8 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 			if (rowsAffected > 0) {
 				log.info("[ADD PRODUCT] Image {} registered.", request.getName());
+			} else {
+				log.info("[ERROR] Error to register image to product {}.", request.getName());
 			}
 		} catch (SQLException e) {
 			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
@@ -105,14 +107,13 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 			}
 		}
 
-		log.info("[ERROR] Error to register image to product {}.", request.getName());
 	}
 	
 	public void updateImage(ProductImageModelDTO request) {
 		try {
 			Connection connection = super.openConnection();
 
-			String query = "UPDATE TB_PRODUCTS_IMAGE FILE = ?, MIMETYPE = ?, NAME = ?, FILEDEFAULT = ? WHERE IDPRODUCT = ?";
+			String query = "UPDATE TB_PRODUCTS_IMAGE SET FILE = ?, MIMETYPE = ?, NAME = ?, FILEDEFAULT = ? WHERE IDPRODUCT = ? AND IDIMAGE = ?";
 
 			PreparedStatement stmt = connection.prepareStatement(query);
 			stmt.setString(1, request.getFile());
@@ -120,11 +121,14 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 			stmt.setString(3, request.getName());
 			stmt.setString(4, request.getFileDefault());
 			stmt.setLong(5, request.getIdProduct());
+			stmt.setLong(6, request.getIdImage());
 
 			int rowsAffected = stmt.executeUpdate();
 
 			if (rowsAffected > 0) {
 				log.info("[ADD PRODUCT] Image {} updated.", request.getName());
+			} else {
+				log.info("[ERROR] Error to update image to product {}.", request.getName());
 			}
 		} catch (SQLException e) {
 			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
@@ -135,8 +139,6 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 				log.error("[ERROR] Error to close connection");
 			}
 		}
-		
-		log.info("[ERROR] Error to update image to product {}.", request.getName());
 	}
 	
 	public List<ProductsModelDTO> getAllProducts(String nameProduct) {

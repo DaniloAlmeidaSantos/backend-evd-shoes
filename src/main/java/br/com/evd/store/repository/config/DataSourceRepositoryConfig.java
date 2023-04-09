@@ -3,6 +3,9 @@ package br.com.evd.store.repository.config;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -28,8 +31,8 @@ public class DataSourceRepositoryConfig {
 	@Value("${market.database.maxIdleSize}")
 	private String maxIdleSize;
 
-	private static Connection connection = null;
-	private static HikariDataSource dataSource = null;
+	private Connection connection = null;
+	private HikariDataSource dataSource = null;
 
 	protected Connection openConnection() throws SQLException {
 		HikariConfig config = new HikariConfig();

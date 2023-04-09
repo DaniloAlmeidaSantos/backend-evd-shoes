@@ -75,9 +75,10 @@ public class BackofficeProductsServiceImpl implements ProductsService {
 		boolean isUpdated = productsRepository.updateProduct(request);
 
 		if (isUpdated) {
-			List<ProductImageModelDTO> images = productsRepository.getImages(request.getIdProduct());
+			List<ProductImageModelDTO> existsImages = productsRepository.getImages(request.getIdProduct());
+			List<ProductImageModelDTO> actualImages = request.getProductImages();
 
-			if (images.size() == 0) {
+			if (existsImages.size() == 0) {
 				for (ProductImageModelDTO image : request.getProductImages()) {
 					try {
 						log.info("[INFO] Inserting new images");
@@ -90,22 +91,22 @@ public class BackofficeProductsServiceImpl implements ProductsService {
 					}
 				}
 			} else {
-				for (ProductImageModelDTO newImage : request.getProductImages()) {
-					for (ProductImageModelDTO image : images) {
-						try {
-							log.info("[INFO] Inserting new images");
-							String[] file = Base64Utils.replaceBase64(newImage.getFile());
-							newImage.setMimeType(file[0]);
-							newImage.setIdProduct(request.getIdProduct());
-							
-							if (image.getIdProduct() != newImage.getIdProduct()) {
-								productsRepository.addImage(newImage);
-							} else {
-								productsRepository.updateImage(newImage);
-							}
-						} catch (Exception e) {
-							log.error("[ERROR] Error to register image.");
+				for (int i = 0; i < actualImages.size(); i++) {
+					try {
+						log.info("[INFO] Inserting new images");
+						String[] file = Base64Utils.replaceBase64(actualImages.get(i).getFile());
+						actualImages.get(i).setMimeType(file[0]);
+						actualImages.get(i).setIdProduct(request.getIdProduct());
+
+						if (i >= existsImages.size()) {
+							productsRepository.addImage(actualImages.get(i));
+						} else if (existsImages.get(i).getIdProduct() != actualImages.get(i).getIdProduct()) {
+							productsRepository.addImage(actualImages.get(i));
+						} else {
+							productsRepository.updateImage(actualImages.get(i));
 						}
+					} catch (Exception e) {
+						log.error("[ERROR] Error to register image {} .", e.getMessage());
 					}
 				}
 			}
