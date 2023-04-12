@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
+import br.com.evd.store.model.dto.ProductCustomerViewDTO;
 import br.com.evd.store.model.dto.ProductsModelDTO;
 import br.com.evd.store.model.dto.ProductsStatusRequestModelDTO;
 import br.com.evd.store.service.ProductsService;
@@ -94,4 +95,19 @@ public class ProductsController {
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to register product."));
 	}
+	
+	@GetMapping(value = "/products/details", produces = "application/json")
+	public ResponseEntity<List<ProductCustomerViewDTO>> getProductView() {
+		log.info("[INFO] Get Product Succesfull");
+		
+		List<ProductCustomerViewDTO> response = productsService.getProductView();
+		
+		if(response != null) {
+			return ResponseEntity.ok(response);
+		}
+		
+		return ResponseEntity.badRequest().body(null);
+		
+	}
+	
 }

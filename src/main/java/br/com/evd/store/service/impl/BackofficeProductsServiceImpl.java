@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import br.com.evd.store.model.dto.ProductCustomerViewDTO;
 import br.com.evd.store.model.dto.ProductImageModelDTO;
 import br.com.evd.store.model.dto.ProductsModelDTO;
 import br.com.evd.store.model.dto.ProductsStatusRequestModelDTO;
@@ -128,6 +129,16 @@ public class BackofficeProductsServiceImpl implements ProductsService {
 			return product;
 		}
 
+		return null;
+	}
+
+	@Override
+	public List<ProductCustomerViewDTO> getProductView() {
+		List<ProductCustomerViewDTO> productView = productsRepository.getProductView();
+		if(productView != null) {
+			return productView;
+		}
+		
 		return null;
 	}
 }

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import br.com.evd.store.model.dto.ProductCustomerViewDTO;
 import br.com.evd.store.model.dto.ProductImageModelDTO;
 import br.com.evd.store.model.dto.ProductsModelDTO;
 import br.com.evd.store.model.dto.ProductsStatusRequestModelDTO;
@@ -258,6 +259,48 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 			}
 		}
 
+		return null;
+	}
+	
+	public List<ProductCustomerViewDTO> getProductView() {
+		List<ProductCustomerViewDTO> products = new ArrayList<>();
+		try {
+			Connection connection = super.openConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT ");
+			sb.append("P.BRAND MARCA, ");
+			sb.append("P.COST VALOR, ");
+			sb.append("P.IDPRODUCT IDPRODUTO, ");
+			sb.append("P.NAMEPRODUCT NOME, ");
+			sb.append("I.FILE IMAGEM ");
+			sb.append("FROM TBPRODUCTS P ");
+			sb.append("LEFT JOIN TB_PRODUCTS_IMAGE I ON I.IDPRODUCT = P.IDPRODUCT ");
+			sb.append("WHERE I.FILEDEFAULT = 'S'");
+			
+			PreparedStatement stmt = connection.prepareStatement(sb.toString());
+			
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				ProductCustomerViewDTO dto = new ProductCustomerViewDTO();
+				dto.setBrand(rs.getString("MARCA"));
+				dto.setCost(rs.getDouble("VALOR"));
+				dto.setIdProduct(rs.getLong("IDPRODUTO"));
+				dto.setNameProduct(rs.getString("NOME"));
+				dto.setFile(rs.getString("IMAGEM"));
+				products.add(dto);
+			}
+			return products;
+		} catch (SQLException e) {
+			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
+		}finally {
+			try {
+				super.closeConnection();
+			} catch (SQLException e) {
+				log.error("[ERROR] Error to close connection");
+			}
+		}
 		return null;
 	}
 	
