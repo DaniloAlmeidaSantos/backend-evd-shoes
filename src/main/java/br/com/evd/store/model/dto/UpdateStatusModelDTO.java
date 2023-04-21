@@ -13,5 +13,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class UpdateStatusModelDTO {
 	private long userId;
+	private long idAddress;
 	private String status;
 }
