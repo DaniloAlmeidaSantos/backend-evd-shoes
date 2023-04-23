@@ -18,11 +18,12 @@ public class UserAddressModelDTO {
 	private long idUser;
 	private String streetName;
 	private int number;
-	private long cep;
+	private String cep;
 	private String complement;
 	private String district;
 	private String city;
 	private String uf;
-	private String addressDefault;
+	private String invoiceAddress;
+	private String deliveryAddress;
 	private String status;
 }

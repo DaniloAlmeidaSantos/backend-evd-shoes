@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.evd.store.enums.UserTypeEnum;
-import br.com.evd.store.model.dto.ProductImageModelDTO;
 import br.com.evd.store.model.dto.UpdateStatusModelDTO;
 import br.com.evd.store.model.dto.UserAddressModelDTO;
 import br.com.evd.store.model.dto.UserModelDTO;
@@ -14,7 +13,6 @@ import br.com.evd.store.model.dto.UserTypeModelDTO;
 import br.com.evd.store.repository.UserRepository;
 import br.com.evd.store.service.CryptoDataService;
 import br.com.evd.store.service.UserService;
-import br.com.evd.store.utils.Base64Utils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -36,9 +34,9 @@ public class UserServiceImpl implements UserService {
 		
 		UserTypeModelDTO type = request.getUserType();
 		
-		if(idObtained > 0 && !type.getGroupName().equals(UserTypeEnum.CUSTOMER.getDescType())) {
+		if(idObtained > 0 && type.getTypeId() != UserTypeEnum.CUSTOMER.getId()) {
 			return true;
-		} else if (type.getGroupName().equals(UserTypeEnum.CUSTOMER.getDescType())) {
+		} else if (type.getTypeId() == UserTypeEnum.CUSTOMER.getId()) {
 			
 			for(UserAddressModelDTO address : request.getAddresses()) {
 				try {

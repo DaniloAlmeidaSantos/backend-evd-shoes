@@ -60,7 +60,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 		try {
 			Connection connection = super.openConnection();
 
-			String query = "INSERT INTO TBUSER (CPF, EMAIL, IDTYPE, PASSWORD, USERNAME) VALUES (?, ?, ?, ?, ?)";
+			String query = "INSERT INTO TBUSER (CPF, EMAIL, IDTYPE, PASSWORD, USERNAME, DATE_OF_BIRTH, GENRE) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 			PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, request.getCpf());
@@ -68,6 +68,8 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			stmt.setLong(3, request.getUserType().getTypeId());
 			stmt.setString(4, request.getPassword());
 			stmt.setString(5, request.getUsername());
+			stmt.setString(6, request.getDateOfBirth());
+			stmt.setString(7, request.getGenre());
 
 			int rowsAffected = stmt.executeUpdate();
 
@@ -247,19 +249,20 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			StringBuilder sb = new StringBuilder();
 			sb.append("INSERT INTO TB_USER_ADDRESS ");
 			sb.append("(STREET_NAME, ADDRESS_NUMBER, ADDRESS_CEP, ADDRESS_COMPLEMENT, ");
-			sb.append("DISTRICT, CITY, UF, ADDRESS_DEFAULT, IDUSER) ");
+			sb.append("ADDRESS_DISTRICT, ADDRESS_CITY, ADDRESS_UF, DELIVERY_ADDRESS, INVOICE_ADDRESS, IDUSER) ");
 			sb.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
 			stmt.setString(1, request.getStreetName());
 			stmt.setLong(2, request.getNumber());
-			stmt.setLong(3, request.getCep());
+			stmt.setString(3, request.getCep());
 			stmt.setString(4, request.getComplement());
 			stmt.setString(5, request.getDistrict());
 			stmt.setString(6, request.getCity());
 			stmt.setString(7, request.getUf());
-			stmt.setString(8, request.getAddressDefault());
-			stmt.setLong(9, request.getIdUser());
+			stmt.setString(8, request.getDeliveryAddress());
+			stmt.setString(9, request.getInvoiceAddress());
+			stmt.setLong(10, request.getIdUser());
 
 			int rowsAffected = stmt.executeUpdate();
 
@@ -276,6 +279,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 				log.error("[ERROR] Error to close connection");
 			}
 		}
+		
 		log.error("[ERROR] Error to register address, ID_USER not pertenced of the type client {} ",
 				request.getIdUser());
 		return false;
@@ -321,8 +325,8 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT A.ID_ADDRESS IDADDRESS, A.STREET_NAME RUA,  A.ADDRESS_NUMBER NUMERO, A.ADDRESS_CEP CEP, ");
-			sb.append("A.ADDRESS_COMPLEMENT COMPLEMENTO, A.DISTRICT BAIRRO, A.CITY CIDADE, A.UF UF, A.ADDRESS_DEFAULT PADRAO ");
-			sb.append("A.STATUS STATUS FROM TB_USER_ADDRESS A JOIN TBUSER U ON U.IDUSER = A.IDUSER LIMIT 0, 25");
+			sb.append("A.ADDRESS_COMPLEMENT COMPLEMENTO, A.DISTRICT BAIRRO, A.CITY CIDADE, A.UF UF, A.DELIVERY_ADDRESS ENTREGA, ");
+			sb.append("A.INVOICE_ADDRESS PAGAMENTO, A.STATUS STATUS FROM TB_USER_ADDRESS A JOIN TBUSER U ON U.IDUSER = A.IDUSER LIMIT 0, 25");
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
 
@@ -333,12 +337,13 @@ public class UserRepository extends DataSourceRepositoryConfig {
 				dto.setIdAddress(rs.getLong("IDADDRESS"));
 				dto.setStreetName(rs.getString("RUA"));
 				dto.setNumber(rs.getInt("NUMERO"));
-				dto.setCep(rs.getLong("CEP"));
+				dto.setCep(rs.getString("CEP"));
 				dto.setComplement(rs.getString("COMPLEMENTO"));
 				dto.setDistrict(rs.getString("BAIRRO"));
 				dto.setCity(rs.getString("CIDADE"));
 				dto.setUf(rs.getString("UF"));
-				dto.setAddressDefault(rs.getString("PADRAO"));
+				dto.setInvoiceAddress(rs.getString("PAGAMENTO"));
+				dto.setDeliveryAddress(rs.getString("ENTREGA"));
 				dto.setStatus(rs.getString("STATUS"));
 				list.add(dto);
 			}

@@ -28,4 +28,6 @@ public final class UserModelDTO implements Serializable {
 	private UserTypeModelDTO userType;
 	private boolean isNewPassword; // Para alteração de senha
 	private List<UserAddressModelDTO> addresses; // endereços
+	private String dateOfBirth;
+	private String genre;
 }

@@ -5,10 +5,10 @@ public enum UserTypeEnum {
 	STOCKIST(2, "ESTOQUISTA"),
 	CUSTOMER(3, "CLIENTE");
 	
-	private long id;
+	private int id;
 	private String descType;
 	
-	private UserTypeEnum(long id, String desc) {
+	private UserTypeEnum(int id, String desc) {
 		this.setId(id);
 		this.setDescType(desc);
 	}
@@ -21,11 +21,11 @@ public enum UserTypeEnum {
 		this.descType = descType;
 	}
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	
