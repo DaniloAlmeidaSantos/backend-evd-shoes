@@ -16,6 +16,7 @@ import lombok.ToString;
 public class UserAuthenticatedModelDTO {
 	@JsonIgnore
 	private String ecryptedPassword;
+	private long idUser;
 	private String userType;
 	private String username;
 	private String email;

@@ -28,7 +28,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT U.USERNAME NOME, U.EMAIL EMAIL, U.PASSWORD PASS, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
+			sb.append("SELECT U.IDUSER IDUSER, U.USERNAME NOME, U.EMAIL EMAIL, U.PASSWORD PASS, UT.TYPEDESC TIPOUSU, U.STATUS STATUS ");
 			sb.append(" FROM TBUSER U ");
 			sb.append("    JOIN TBUSERTYPE UT ON UT.IDTYPE = U.IDTYPE ");
 			sb.append(" WHERE EMAIL = ?");
@@ -39,7 +39,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				return UserAuthenticatedModelDTO.builder().ecryptedPassword(rs.getString("PASS"))
+				return UserAuthenticatedModelDTO.builder().idUser(rs.getLong("IDUSER")).ecryptedPassword(rs.getString("PASS"))
 						.email(rs.getString("EMAIL")).username(rs.getString("NOME")).userType(rs.getString("TIPOUSU"))
 						.status(rs.getString("STATUS")).build();
 			}
@@ -140,7 +140,8 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append(
-					"SELECT U.IDUSER IDUSER, U.USERNAME NOME, U.CPF CPF, U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU, UT.IDTYPE IDTIPOUSU, U.STATUS STATUS, U.PASSWORD SENHA ");
+					"SELECT U.IDUSER IDUSER, U.USERNAME NOME, U.CPF CPF, U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU,  ");
+			sb.append(" UT.IDTYPE IDTIPOUSU, U.STATUS STATUS, U.PASSWORD SENHA, U.DATE_OF_BIRTH DT_NASC, U.GENRE GENERO ");
 			sb.append(" FROM TBUSER U ");
 			sb.append("    JOIN TBUSERTYPE UT ON UT.IDTYPE = U.IDTYPE ");
 			sb.append(" WHERE U.IDUSER =  ?");
@@ -159,6 +160,8 @@ public class UserRepository extends DataSourceRepositoryConfig {
 				dto.setUserType(new UserTypeModelDTO(rs.getLong("IDTIPOUSU"), rs.getString("TIPOUSU")));
 				dto.setStatus(rs.getString("STATUS"));
 				dto.setPassword(rs.getString("SENHA"));
+				dto.setGenre(rs.getString("GENERO"));
+				dto.setDateOfBirth(rs.getString("DT_NASC"));
 
 				log.info("[INFO] User {} founded success", id);
 
