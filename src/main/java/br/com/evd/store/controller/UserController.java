@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
 import br.com.evd.store.model.dto.AuthenticateModelDTO;
 import br.com.evd.store.model.dto.UpdateStatusModelDTO;
+import br.com.evd.store.model.dto.UserAddressModelDTO;
 import br.com.evd.store.model.dto.UserAuthenticatedModelDTO;
 import br.com.evd.store.model.dto.UserModelDTO;
 import br.com.evd.store.service.AuthenticateService;
@@ -47,6 +48,7 @@ public class UserController {
 		return ResponseEntity.badRequest().body(null);
 	}
 
+	
 	@PostMapping(value = "/user/register", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<ApiDefaultResponseDTO> register(@RequestBody UserModelDTO request) {
 
@@ -108,4 +110,32 @@ public class UserController {
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to update user."));
 	}
+
+	@PostMapping(value = "/user/register/address", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<ApiDefaultResponseDTO> createrNewAddress(@RequestBody UserAddressModelDTO request) {
+		
+		boolean isCreated = userService.addAddress(request);
+		
+		log.info("[ADD ADDRESS] Address add ? {} ", isCreated);
+		if(isCreated) {
+			return new ResponseEntity<ApiDefaultResponseDTO>(
+					new ApiDefaultResponseDTO("201", "Address created."), HttpStatus.CREATED);
+		}
+		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to create address."));
+	}
+
+
+	@PutMapping(value = "/user/address/status", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<ApiDefaultResponseDTO> inactivateStatusAddress(@RequestBody UpdateStatusModelDTO request) {
+		
+		boolean isInactivated = userService.updateStatusAddress(request);
+		
+		if(isInactivated) {
+			return new ResponseEntity<ApiDefaultResponseDTO>(
+					new ApiDefaultResponseDTO("200", "Status address updated"), HttpStatus.OK);
+		}
+
+		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to update status of the address."));
+	}
+
 }

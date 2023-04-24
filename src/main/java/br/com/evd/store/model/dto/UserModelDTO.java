@@ -1,6 +1,7 @@
 package br.com.evd.store.model.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -26,4 +27,7 @@ public final class UserModelDTO implements Serializable {
 	private String status;
 	private UserTypeModelDTO userType;
 	private boolean isNewPassword; // Para alteração de senha
+	private List<UserAddressModelDTO> addresses; // endereços
+	private String dateOfBirth;
+	private String genre;
 }

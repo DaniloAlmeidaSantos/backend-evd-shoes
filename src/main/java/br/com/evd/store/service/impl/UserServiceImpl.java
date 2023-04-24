@@ -5,8 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.evd.store.enums.UserTypeEnum;
 import br.com.evd.store.model.dto.UpdateStatusModelDTO;
+import br.com.evd.store.model.dto.UserAddressModelDTO;
 import br.com.evd.store.model.dto.UserModelDTO;
+import br.com.evd.store.model.dto.UserTypeModelDTO;
 import br.com.evd.store.repository.UserRepository;
 import br.com.evd.store.service.CryptoDataService;
 import br.com.evd.store.service.UserService;
@@ -27,7 +30,27 @@ public class UserServiceImpl implements UserService {
 		List<String> encrypteds = cryptoDataService.encryptData(request.getPassword());
 		request.setPassword(encrypteds.get(0));
 
-		return repository.register(request);
+		long idObtained = repository.register(request);
+		
+		UserTypeModelDTO type = request.getUserType();
+		
+		if(idObtained > 0 && type.getTypeId() != UserTypeEnum.CUSTOMER.getId()) {
+			return true;
+		} else if (type.getTypeId() == UserTypeEnum.CUSTOMER.getId()) {
+			
+			for(UserAddressModelDTO address : request.getAddresses()) {
+				try {
+					address.setIdUser(idObtained);
+					repository.registerAddress(address);
+				} catch (Exception e) {
+					log.error("[ERROR] Error to register address.");
+				}
+			}
+			log.info("[INFO] Customer {} created success ", request.getUsername());
+			return true;
+		}
+		
+		return false;
 	}
 
 	@Override
@@ -63,7 +86,42 @@ public class UserServiceImpl implements UserService {
 
 	public UserModelDTO getUser(long id) {
 		UserModelDTO response = repository.getUser(id);
+		
+		if(response.getUserType().getGroupName().equals(UserTypeEnum.CUSTOMER.getDescType())) {
+			response.setAddresses(getAddress(id));
+		}
+		
 		return response;
+	}
+
+	@Override
+	public boolean addAddress (UserAddressModelDTO request) {
+		 if(request != null) {
+			 repository.registerAddress(request);
+			 return true;
+		 }
+		 return false;
+	}
+
+
+	@Override
+	public boolean updateStatusAddress(UpdateStatusModelDTO request) {
+		if(request != null) {
+			repository.inactivateAddress(request);
+			return true;
+		}
+		return false;
+	}
+	
+	private List<UserAddressModelDTO> getAddress(long id) {
+		List<UserAddressModelDTO> data = repository.getAddressList(id);
+		
+		if(data.size() > 0) {
+			return data;
+		}
+		
+		log.info("[ALERT] Not found address in database");
+		return null;
 	}
 
 }
