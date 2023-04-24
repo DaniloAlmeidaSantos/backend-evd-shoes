@@ -140,7 +140,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append(
-					"SELECT U.USERNAME NOME, U.CPF CPF, U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU, UT.IDTYPE IDTIPOUSU, U.STATUS STATUS, U.PASSWORD SENHA ");
+					"SELECT U.IDUSER IDUSER, U.USERNAME NOME, U.CPF CPF, U.EMAIL EMAIL, UT.TYPEDESC TIPOUSU, UT.IDTYPE IDTIPOUSU, U.STATUS STATUS, U.PASSWORD SENHA ");
 			sb.append(" FROM TBUSER U ");
 			sb.append("    JOIN TBUSERTYPE UT ON UT.IDTYPE = U.IDTYPE ");
 			sb.append(" WHERE U.IDUSER =  ?");
@@ -152,6 +152,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			while (rs.next()) {
 				UserModelDTO dto = new UserModelDTO();
+				dto.setIdUser(rs.getLong("IDUSER"));
 				dto.setUsername(rs.getString("NOME"));
 				dto.setCpf(rs.getString("CPF"));
 				dto.setEmail(rs.getString("EMAIL"));
@@ -254,7 +255,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
 			stmt.setString(1, request.getStreetName());
-			stmt.setLong(2, request.getNumber());
+			stmt.setString(2, request.getNumber());
 			stmt.setString(3, request.getCep());
 			stmt.setString(4, request.getComplement());
 			stmt.setString(5, request.getDistrict());
@@ -317,7 +318,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 		return false;
 	}
 	
-	public List<UserAddressModelDTO> getAddressList() {
+	public List<UserAddressModelDTO> getAddressList(long id) {
 		List<UserAddressModelDTO> list = new ArrayList<>();
 		
 		try {
@@ -325,18 +326,21 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT A.ID_ADDRESS IDADDRESS, A.STREET_NAME RUA,  A.ADDRESS_NUMBER NUMERO, A.ADDRESS_CEP CEP, ");
-			sb.append("A.ADDRESS_COMPLEMENT COMPLEMENTO, A.DISTRICT BAIRRO, A.CITY CIDADE, A.UF UF, A.DELIVERY_ADDRESS ENTREGA, ");
-			sb.append("A.INVOICE_ADDRESS PAGAMENTO, A.STATUS STATUS FROM TB_USER_ADDRESS A JOIN TBUSER U ON U.IDUSER = A.IDUSER LIMIT 0, 25");
+			sb.append("A.ADDRESS_COMPLEMENT COMPLEMENTO, A.ADDRESS_DISTRICT BAIRRO, A.ADDRESS_CITY CIDADE, A.ADDRESS_UF UF, ");
+			sb.append("A.DELIVERY_ADDRESS ENTREGA, A.INVOICE_ADDRESS PAGAMENTO, A.STATUS AS STATUS FROM TB_USER_ADDRESS A ");
+			sb.append("WHERE IDUSER = ? AND STATUS <> 'INATIVO'");
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
-
+			
+			stmt.setLong(1, id);
+			
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
 				UserAddressModelDTO dto = new UserAddressModelDTO();
 				dto.setIdAddress(rs.getLong("IDADDRESS"));
 				dto.setStreetName(rs.getString("RUA"));
-				dto.setNumber(rs.getInt("NUMERO"));
+				dto.setNumber(rs.getString("NUMERO"));
 				dto.setCep(rs.getString("CEP"));
 				dto.setComplement(rs.getString("COMPLEMENTO"));
 				dto.setDistrict(rs.getString("BAIRRO"));

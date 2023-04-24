@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService {
 			
 			for(UserAddressModelDTO address : request.getAddresses()) {
 				try {
+					address.setIdUser(idObtained);
 					repository.registerAddress(address);
 				} catch (Exception e) {
 					log.error("[ERROR] Error to register address.");
@@ -85,6 +86,11 @@ public class UserServiceImpl implements UserService {
 
 	public UserModelDTO getUser(long id) {
 		UserModelDTO response = repository.getUser(id);
+		
+		if(response.getUserType().getGroupName().equals(UserTypeEnum.CUSTOMER.getDescType())) {
+			response.setAddresses(getAddress(id));
+		}
+		
 		return response;
 	}
 
@@ -97,17 +103,6 @@ public class UserServiceImpl implements UserService {
 		 return false;
 	}
 
-	@Override
-	public List<UserAddressModelDTO> getAddress() {
-		List<UserAddressModelDTO> data = repository.getAddressList();
-		
-		if(data.size() > 0) {
-			return data;
-		}
-		
-		log.info("[ALERT] Not found address in database");
-		return null;
-	}
 
 	@Override
 	public boolean updateStatusAddress(UpdateStatusModelDTO request) {
@@ -118,6 +113,15 @@ public class UserServiceImpl implements UserService {
 		return false;
 	}
 	
-	
+	private List<UserAddressModelDTO> getAddress(long id) {
+		List<UserAddressModelDTO> data = repository.getAddressList(id);
+		
+		if(data.size() > 0) {
+			return data;
+		}
+		
+		log.info("[ALERT] Not found address in database");
+		return null;
+	}
 
 }

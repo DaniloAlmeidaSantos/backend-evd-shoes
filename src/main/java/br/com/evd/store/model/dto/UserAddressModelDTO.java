@@ -17,7 +17,7 @@ public class UserAddressModelDTO {
 	private long idAddress;
 	private long idUser;
 	private String streetName;
-	private int number;
+	private String number;
 	private String cep;
 	private String complement;
 	private String district;

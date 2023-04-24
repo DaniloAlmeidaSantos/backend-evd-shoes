@@ -124,15 +124,6 @@ public class UserController {
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to create address."));
 	}
 
-	@GetMapping(value = "/user/addresses", produces = "application/json")
-	public ResponseEntity<List<UserAddressModelDTO>> getListAddress() {
-		List<UserAddressModelDTO> addressDataList = userService.getAddress();
-		
-		if(addressDataList != null) {
-			return ResponseEntity.ok(addressDataList);
-		}
-		return ResponseEntity.badRequest().body(null);
-	}
 
 	@PutMapping(value = "/user/address/status", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<ApiDefaultResponseDTO> inactivateStatusAddress(@RequestBody UpdateStatusModelDTO request) {
