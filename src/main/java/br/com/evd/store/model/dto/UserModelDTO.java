@@ -20,13 +20,13 @@ public final class UserModelDTO implements Serializable {
 	private static final long serialVersionUID = 5217920246895673323L;
 	
 	private long idUser;
-	private String username;
+	private String username; 
 	private String cpf;
 	private String email;
 	private String password;
 	private String status;
 	private UserTypeModelDTO userType;
-	private boolean isNewPassword; // Para alteração de senha
+	private boolean newPassword;
 	private List<UserAddressModelDTO> addresses; // endereços
 	private String dateOfBirth;
 	private String genre;
