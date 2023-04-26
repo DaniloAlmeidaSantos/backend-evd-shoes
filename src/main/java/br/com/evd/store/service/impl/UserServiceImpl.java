@@ -31,25 +31,25 @@ public class UserServiceImpl implements UserService {
 		request.setPassword(encrypteds.get(0));
 
 		long idObtained = repository.register(request);
-		
+
 		UserTypeModelDTO type = request.getUserType();
-		
-		if(idObtained > 0 && type.getTypeId() != UserTypeEnum.CUSTOMER.getId()) {
+
+		if (idObtained > 0 && type.getTypeId() != UserTypeEnum.CUSTOMER.getId()) {
 			return true;
 		} else if (type.getTypeId() == UserTypeEnum.CUSTOMER.getId()) {
-			
-			for(UserAddressModelDTO address : request.getAddresses()) {
+
+			for (UserAddressModelDTO address : request.getAddresses()) {
 				try {
 					address.setIdUser(idObtained);
 					repository.registerAddress(address);
 				} catch (Exception e) {
-					log.error("[ERROR] Error to register address.");
+					log.error("[ERROR] Error to register address {}. ", e.getMessage());
 				}
 			}
 			log.info("[INFO] Customer {} created success ", request.getUsername());
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -60,6 +60,27 @@ public class UserServiceImpl implements UserService {
 			List<String> encrypteds = cryptoDataService.encryptData(request.getPassword());
 			request.setPassword(encrypteds.get(0));
 		}
+
+		if (request.getUserType().getTypeId() == UserTypeEnum.CUSTOMER.getId()) {
+			request.getAddresses().stream().forEach(data -> {
+				try {
+					if (data.getIdAddress() == 0) {
+						log.info("[UPDATE USER] Inserting new addresses {} to {}", request.getUsername(),
+								data.getStreetName());
+						data.setIdUser(request.getIdUser());
+						repository.registerAddress(data);
+					} else {
+						repository.updateAddressesDefault(data);						
+					}
+				} catch (Exception e) {
+					log.error("[ERROR] Error to register address.");
+				}
+			});
+
+			log.info("[UPDATE USER] Updating user {}", request);
+			return repository.updateUserCustomer(request);
+		}
+
 		log.info("[UPDATE USER] Updating user {}", request);
 		return repository.updateUser(request);
 	}
@@ -69,57 +90,56 @@ public class UserServiceImpl implements UserService {
 		if (request != null) {
 			return repository.updateStatus(request);
 		}
-		
+
 		return false;
 	}
 
 	public List<UserModelDTO> getUsers() {
 		List<UserModelDTO> data = repository.getUserList();
-		
+
 		if (data.size() > 0) {
 			return data;
 		}
-		
+
 		log.info("[ALERT] Not found users in database");
 		return null;
 	}
 
 	public UserModelDTO getUser(long id) {
 		UserModelDTO response = repository.getUser(id);
-		
-		if(response.getUserType().getGroupName().equals(UserTypeEnum.CUSTOMER.getDescType())) {
+
+		if (response.getUserType().getGroupName().equals(UserTypeEnum.CUSTOMER.getDescType())) {
 			response.setAddresses(getAddress(id));
 		}
-		
+
 		return response;
 	}
 
 	@Override
-	public boolean addAddress (UserAddressModelDTO request) {
-		 if(request != null) {
-			 repository.registerAddress(request);
-			 return true;
-		 }
-		 return false;
+	public boolean addAddress(UserAddressModelDTO request) {
+		if (request != null) {
+			repository.registerAddress(request);
+			return true;
+		}
+		return false;
 	}
-
 
 	@Override
 	public boolean updateStatusAddress(UpdateStatusModelDTO request) {
-		if(request != null) {
+		if (request != null) {
 			repository.inactivateAddress(request);
 			return true;
 		}
 		return false;
 	}
-	
+
 	private List<UserAddressModelDTO> getAddress(long id) {
 		List<UserAddressModelDTO> data = repository.getAddressList(id);
-		
-		if(data.size() > 0) {
+
+		if (data.size() > 0) {
 			return data;
 		}
-		
+
 		log.info("[ALERT] Not found address in database");
 		return null;
 	}

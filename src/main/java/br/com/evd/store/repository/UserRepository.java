@@ -213,6 +213,41 @@ public class UserRepository extends DataSourceRepositoryConfig {
 
 		return false;
 	}
+	
+	public boolean updateUserCustomer(UserModelDTO request) {
+
+		try {
+			Connection connection = super.openConnection();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("UPDATE TBUSER ");
+			sb.append("SET USERNAME = ?, GENRE = ?, PASSWORD = ?, DATE_OF_BIRTH = ? ");
+			sb.append("WHERE IDUSER = ?");
+
+			PreparedStatement stmt = connection.prepareStatement(sb.toString());
+			stmt.setString(1, request.getUsername());
+			stmt.setString(2, request.getGenre());
+			stmt.setString(3, request.getPassword());
+			stmt.setString(4, request.getDateOfBirth());
+			stmt.setLong(5, request.getIdUser());
+
+			int rowsAffected = stmt.executeUpdate();
+
+			if (rowsAffected > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
+		} finally {
+			try {
+				super.closeConnection();
+			} catch (SQLException e) {
+				log.error("[ERROR] Error to close connection");
+			}
+		}
+
+		return false;
+	}
 
 	public boolean updateStatus(UpdateStatusModelDTO request) {
 
@@ -227,6 +262,39 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
 			stmt.setString(1, request.getStatus());
 			stmt.setLong(2, request.getUserId());
+
+			int rowsAffected = stmt.executeUpdate();
+
+			if (rowsAffected > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
+		} finally {
+			try {
+				super.closeConnection();
+			} catch (SQLException e) {
+				log.error("[ERROR] Error to close connection");
+			}
+		}
+
+		return false;
+	}
+	
+	public boolean updateAddressesDefault(UserAddressModelDTO request) {
+
+		try {
+			Connection connection = super.openConnection();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("UPDATE TB_USER_ADDRESS ");
+			sb.append(" SET DELIVERY_ADDRESS = ?, INVOICE_ADDRESS = ?");
+			sb.append(" WHERE ID_ADDRESS = ?");
+
+			PreparedStatement stmt = connection.prepareStatement(sb.toString());
+			stmt.setString(1, request.getInvoiceAddress());
+			stmt.setString(2, request.getDeliveryAddress());
+			stmt.setLong(3, request.getIdAddress());
 
 			int rowsAffected = stmt.executeUpdate();
 
@@ -271,7 +339,7 @@ public class UserRepository extends DataSourceRepositoryConfig {
 			int rowsAffected = stmt.executeUpdate();
 
 			if (rowsAffected > 0) {
-				log.info("[ADD ADDRESS] Address {} registered.");
+				log.info("[ADD ADDRESS] Address {} registered.", request.getStreetName());
 				return true;
 			}
 		} catch (SQLException e) {
