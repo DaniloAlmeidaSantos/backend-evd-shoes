@@ -97,12 +97,11 @@ public class ProductsController {
 	}
 	
 	@GetMapping(value = "/products/details", produces = "application/json")
-	public ResponseEntity<List<ProductCustomerViewDTO>> getProductView() {
-		log.info("[INFO] Get Product Succesfull");
-		
+	public ResponseEntity<List<ProductCustomerViewDTO>> getProductView() {		
 		List<ProductCustomerViewDTO> response = productsService.getProductView();
 		
 		if(response != null) {
+			log.info("[INFO] Get Product Succesfull");
 			return ResponseEntity.ok(response);
 		}
 		

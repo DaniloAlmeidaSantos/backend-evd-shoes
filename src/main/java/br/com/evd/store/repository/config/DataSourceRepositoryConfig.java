@@ -3,9 +3,6 @@ package br.com.evd.store.repository.config;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -40,8 +37,10 @@ public class DataSourceRepositoryConfig {
 		config.setUsername(username);
 		config.setPassword(password);
 		config.setDriverClassName(driver);
-		config.addDataSourceProperty("minimumIdle", minIdle);
 		config.addDataSourceProperty("maximumPoolSize", maxIdleSize);
+		config.addDataSourceProperty("minimumIdle", minIdle);
+		config.setMaxLifetime(1800000);
+		config.setValidationTimeout(250);
 		
 		dataSource = new HikariDataSource(config);
 		connection = dataSource.getConnection();
