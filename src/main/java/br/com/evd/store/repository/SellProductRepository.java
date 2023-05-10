@@ -20,8 +20,8 @@ public class SellProductRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("INSERT INTO TB_SALES_HISTORIC ");
-			sb.append(" (IDUSER, IDPRODUCT, SALE_QUANT_PRODUCTS, SALE_TOTAL_PRICE, ID_ADDRESS ");
-			sb.append(" VALUES (?, ?, ?, ?, ?)");
+			sb.append(" (IDUSER, IDPRODUCT, SALE_QUANT_PRODUCTS, SALE_TOTAL_PRICE, ID_ADDRESS, ID_PAYMENT, SALE_STATUS ");
+			sb.append(" VALUES (?, ?, ?, ?, ?, ?)");
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
 			stmt.setLong(1, request.getIdUser());
@@ -29,6 +29,8 @@ public class SellProductRepository extends DataSourceRepositoryConfig {
 			stmt.setInt(3, request.getQuantity());
 			stmt.setDouble(4, request.getTotalPrice());
 			stmt.setLong(5, request.getIdAddress());
+			stmt.setLong(6, request.getIdPayment());
+			stmt.setString(7, request.getStatus());
 
 			int rowsAffected = stmt.executeUpdate();
 
