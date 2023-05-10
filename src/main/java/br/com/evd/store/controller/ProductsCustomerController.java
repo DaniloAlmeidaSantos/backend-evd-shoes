@@ -46,7 +46,7 @@ public class ProductsCustomerController {
 		boolean isSelled = cartService.sellProduct(request);
 
 		if (isSelled) {
-			return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("200", "Products saled success"));
+			return ResponseEntity.ok().body(new ApiDefaultResponseDTO("200", "Products saled success"));
 		}
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to sell produtcts"));
