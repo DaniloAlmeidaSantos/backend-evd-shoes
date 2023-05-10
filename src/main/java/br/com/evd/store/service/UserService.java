@@ -17,4 +17,5 @@ public interface UserService {
 	UserModelDTO getUser(long id);
 	boolean addAddress(UserAddressModelDTO request);
 	boolean updateStatusAddress(UpdateStatusModelDTO request);
+	List<UserAddressModelDTO> getAddresses(long id);
 }

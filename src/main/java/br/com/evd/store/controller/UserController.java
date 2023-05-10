@@ -137,5 +137,16 @@ public class UserController {
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to update status of the address."));
 	}
+	
+	@GetMapping(value = "/user/address", produces = "application/json")
+	public ResponseEntity<List<UserAddressModelDTO>> getAddress(@RequestParam long id) {
+		List<UserAddressModelDTO> addresses = userService.getAddresses(id);
+		
+		if (addresses.size() > 0) {
+			return ResponseEntity.ok(addresses);
+		}
+		
+		return ResponseEntity.badRequest().body(null);
+	}
 
 }

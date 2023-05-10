@@ -23,7 +23,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 	public long addProduct(ProductsModelDTO request) {
 		Long idObtained = null;
-		
+
 		try {
 			Connection connection = super.openConnection();
 
@@ -40,29 +40,29 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 			if (rowsAffected > 0) {
 				log.info("[ADD PRODUCT] Product {} registered.", request.getNameProduct());
-				
+
 				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-		            if (generatedKeys.next()) {
-		            	idObtained = generatedKeys.getLong(1);
-		            	
-		            	query = "INSERT INTO TBSTOCK (AMOUNT, IDPRODUCT) VALUES (?, ?)";
-		            	PreparedStatement stmtStock = connection.prepareStatement(query);
-		            	stmtStock.setInt(1, request.getQuantity());
-		            	stmtStock.setDouble(2, idObtained);
-		            	
-		            	rowsAffected = stmtStock.executeUpdate();
-		            	
-		            	if (rowsAffected == 0) {
-			                throw new SQLException("Creating stock to product failed.");
-		            	}
-		            } else {
-		                throw new SQLException("Creating product failed, no ID obtained.");
-		            }
-		            
-		            generatedKeys.close();
-		        }
+					if (generatedKeys.next()) {
+						idObtained = generatedKeys.getLong(1);
+
+						query = "INSERT INTO TBSTOCK (AMOUNT, IDPRODUCT) VALUES (?, ?)";
+						PreparedStatement stmtStock = connection.prepareStatement(query);
+						stmtStock.setInt(1, request.getQuantity());
+						stmtStock.setDouble(2, idObtained);
+
+						rowsAffected = stmtStock.executeUpdate();
+
+						if (rowsAffected == 0) {
+							throw new SQLException("Creating stock to product failed.");
+						}
+					} else {
+						throw new SQLException("Creating product failed, no ID obtained.");
+					}
+
+					generatedKeys.close();
+				}
 			}
-			
+
 			return idObtained;
 		} catch (SQLException e) {
 			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
@@ -77,7 +77,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 		log.info("[ERROR] Error to register Product {}.", request.getNameProduct());
 		return idObtained;
 	}
-	
+
 	public void addImage(ProductImageModelDTO request) {
 		try {
 			Connection connection = super.openConnection();
@@ -109,7 +109,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 		}
 
 	}
-	
+
 	public void updateImage(ProductImageModelDTO request) {
 		try {
 			Connection connection = super.openConnection();
@@ -141,7 +141,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 			}
 		}
 	}
-	
+
 	public List<ProductsModelDTO> getAllProducts(String nameProduct) {
 		List<ProductsModelDTO> list = new ArrayList<>();
 		PreparedStatement stmt = null;
@@ -150,20 +150,21 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT ");
-			sb.append(" P.IDPRODUCT IDPRODUTO, P.NAMEPRODUCT NOMEPRODUTO, P.COST PRECO, P.STATUS STATUS, S.AMOUNT QTDE ");
+			sb.append(
+					" P.IDPRODUCT IDPRODUTO, P.NAMEPRODUCT NOMEPRODUTO, P.COST PRECO, P.STATUS STATUS, S.AMOUNT QTDE ");
 			sb.append("FROM TBPRODUCTS P ");
 			sb.append("  JOIN TBSTOCK S ON S.IDPRODUCT = P.IDPRODUCT ");
 			if (nameProduct != null) {
-				log.info("[INFO] Getting like responses to {} ", nameProduct);	
+				log.info("[INFO] Getting like responses to {} ", nameProduct);
 				sb.append(" WHERE P.NAMEPRODUCT LIKE ? ");
 			}
 			sb.append(" ORDER BY P.IDPRODUCT DESC ");
-			
+
 			stmt = connection.prepareStatement(sb.toString());
 			if (nameProduct != null) {
 				stmt.setString(1, nameProduct + "%");
 			}
-			
+
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
@@ -187,9 +188,9 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 		return list;
 	}
-	
+
 	public boolean updateStatus(ProductsStatusRequestModelDTO request) {
-		
+
 		try {
 			Connection connection = super.openConnection();
 
@@ -202,10 +203,10 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 			int rowsAffected = stmt.executeUpdate();
 
 			if (rowsAffected > 0) {
-				log.info("[INFO] Product status {} updated.", request.getIdProduct());				
+				log.info("[INFO] Product status {} updated.", request.getIdProduct());
 				return true;
 			}
-			
+
 		} catch (SQLException e) {
 			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
 		} finally {
@@ -215,11 +216,11 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 				log.error("[ERROR] Error to close connection");
 			}
 		}
-		
+
 		log.info("[ERROR] Error to update status the product {} ", request.getIdProduct());
 		return false;
 	}
-	
+
 	public ProductsModelDTO getProduct(long id) {
 		PreparedStatement stmt = null;
 		try {
@@ -227,14 +228,15 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT ");
-			sb.append(" P.IDPRODUCT IDPRODUTO, P.NAMEPRODUCT NOMEPRODUTO, P.COST PRECO, P.STATUS STATUS, S.AMOUNT QTDE, P.BRAND MARCA, P.RATIO RATIO, P.DESCRIPTION DESCRICAO ");
+			sb.append(
+					" P.IDPRODUCT IDPRODUTO, P.NAMEPRODUCT NOMEPRODUTO, P.COST PRECO, P.STATUS STATUS, S.AMOUNT QTDE, P.BRAND MARCA, P.RATIO RATIO, P.DESCRIPTION DESCRICAO ");
 			sb.append("FROM TBPRODUCTS P ");
 			sb.append("  JOIN TBSTOCK S ON S.IDPRODUCT = P.IDPRODUCT ");
 			sb.append("WHERE P.IDPRODUCT = ? ");
-			
+
 			stmt = connection.prepareStatement(sb.toString());
 			stmt.setLong(1, id);
-			
+
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
@@ -261,12 +263,13 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 		return null;
 	}
-	
-	public List<ProductCustomerViewDTO> getProductView() {
+
+	public List<ProductCustomerViewDTO> getProductView(long id) {
 		List<ProductCustomerViewDTO> products = new ArrayList<>();
+		PreparedStatement stmt = null;
 		try {
 			Connection connection = super.openConnection();
-			
+
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT ");
 			sb.append("P.BRAND MARCA, ");
@@ -276,13 +279,19 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 			sb.append("I.FILE IMAGEM ");
 			sb.append("FROM TBPRODUCTS P ");
 			sb.append("LEFT JOIN TB_PRODUCTS_IMAGE I ON I.IDPRODUCT = P.IDPRODUCT ");
-			sb.append("WHERE I.FILEDEFAULT = 'S'");
-			
-			PreparedStatement stmt = connection.prepareStatement(sb.toString());
+			sb.append("WHERE I.FILEDEFAULT = 'S' AND P.STATUS = 'A' ");
+
+			if (id > 0) {
+				sb.append(" AND P.IDPRODUCT = ? ");
+				stmt = connection.prepareStatement(sb.toString());
+				stmt.setLong(1, id);
+			} else {
+				stmt = connection.prepareStatement(sb.toString());
+			}
 			
 			ResultSet rs = stmt.executeQuery();
-			
-			while(rs.next()) {
+
+			while (rs.next()) {
 				ProductCustomerViewDTO dto = new ProductCustomerViewDTO();
 				dto.setBrand(rs.getString("MARCA"));
 				dto.setCost(rs.getDouble("VALOR"));
@@ -294,7 +303,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 			return products;
 		} catch (SQLException e) {
 			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
-		}finally {
+		} finally {
 			try {
 				super.closeConnection();
 			} catch (SQLException e) {
@@ -303,7 +312,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 		}
 		return null;
 	}
-	
+
 	public List<ProductImageModelDTO> getImages(long id) {
 		List<ProductImageModelDTO> images = new ArrayList<>();
 		PreparedStatement stmt = null;
@@ -312,13 +321,14 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append(" SELECT ");
-			sb.append(" 	IDIMAGE ID, NAME NOME, FILE IMAGEM, FILEDEFAULT IMAGEMPRINCIPAL, MIMETYPE  MIME, IDPRODUCT IDPRODUTO ");
+			sb.append(
+					" 	IDIMAGE ID, NAME NOME, FILE IMAGEM, FILEDEFAULT IMAGEMPRINCIPAL, MIMETYPE  MIME, IDPRODUCT IDPRODUTO ");
 			sb.append(" FROM TB_PRODUCTS_IMAGE ");
 			sb.append(" WHERE IDPRODUCT = ? ");
-			
+
 			stmt = connection.prepareStatement(sb.toString());
 			stmt.setLong(1, id);
-			
+
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
@@ -331,7 +341,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 				dto.setIdProduct(rs.getLong("IDPRODUTO"));
 				images.add(dto);
 			}
-			
+
 			return images;
 		} catch (SQLException e) {
 			log.error("[ERROR] Error to connect in database {} ", e.getMessage());
@@ -345,7 +355,7 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 
 		return images;
 	}
-	
+
 	public boolean updateProduct(ProductsModelDTO request) {
 		try {
 			Connection connection = super.openConnection();
@@ -376,10 +386,10 @@ public class ProductsRepository extends DataSourceRepositoryConfig {
 				log.error("[ERROR] Error to close connection");
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	private void updateStock(int quantity, long idProduct) {
 		try {
 			Connection connection = super.openConnection();

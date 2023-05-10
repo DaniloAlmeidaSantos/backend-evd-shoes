@@ -18,5 +18,7 @@ public class ProductCustomerViewDTO {
 	private String brand;
 	private String nameProduct;
 	private Double cost;
+	private Double totalPrice; // If the request is to cart
 	private String file;
+	private int quantity;
 }

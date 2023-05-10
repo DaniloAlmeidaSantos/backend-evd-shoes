@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/backoffice")
 @CrossOrigin(origins = "*")
-public class ProductsController {
+public class BackofficeProductsController {
 	
 	@Autowired
 	@Qualifier("BackofficeProducts")

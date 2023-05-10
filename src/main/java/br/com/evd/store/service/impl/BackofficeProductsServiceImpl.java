@@ -134,11 +134,15 @@ public class BackofficeProductsServiceImpl implements ProductsService {
 
 	@Override
 	public List<ProductCustomerViewDTO> getProductView() {
-		List<ProductCustomerViewDTO> productView = productsRepository.getProductView();
+		log.info("[PRODUCT] Getting products to home.");
+		List<ProductCustomerViewDTO> productView = productsRepository.getProductView(0);
+		
 		if(productView != null) {
+			log.info("[PRODUTCT] Success to find products to home.");
 			return productView;
 		}
 		
+		log.info("[PRODUCT] Products not found, or error to find products in databse.");
 		return null;
 	}
 }

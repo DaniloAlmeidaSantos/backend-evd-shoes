@@ -136,6 +136,19 @@ public class UserServiceImpl implements UserService {
 		}
 		return false;
 	}
+	
+	@Override
+	public List<UserAddressModelDTO> getAddresses(long id) {
+		log.info("[ADDRESSES] Getting addresses to user id {} ", id);
+		List<UserAddressModelDTO> addresses = repository.getAddressList(id);
+		
+		if (addresses != null) {
+			return addresses;
+		}
+		
+		log.info("[ADDRESSES] Addresses not found to user id {} ", id);
+		return null;
+	}
 
 	private List<UserAddressModelDTO> getAddress(long id) {
 		List<UserAddressModelDTO> data = repository.getAddressList(id);
@@ -147,5 +160,4 @@ public class UserServiceImpl implements UserService {
 		log.info("[ALERT] Not found address in database");
 		return null;
 	}
-
 }
