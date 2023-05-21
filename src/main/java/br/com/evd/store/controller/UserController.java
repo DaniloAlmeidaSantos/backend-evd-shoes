@@ -139,11 +139,11 @@ public class UserController {
 	}
 	
 	@GetMapping(value = "/user/address", produces = "application/json")
-	public ResponseEntity<List<UserAddressModelDTO>> getAddress(@RequestParam long id) {
-		List<UserAddressModelDTO> addresses = userService.getAddresses(id);
+	public ResponseEntity<UserAddressModelDTO> getAddress(@RequestParam long id) {
+		UserAddressModelDTO address = userService.getAddresses(id);
 		
-		if (addresses.size() > 0) {
-			return ResponseEntity.ok(addresses);
+		if (address != null) {
+			return ResponseEntity.ok(address);
 		}
 		
 		return ResponseEntity.badRequest().body(null);

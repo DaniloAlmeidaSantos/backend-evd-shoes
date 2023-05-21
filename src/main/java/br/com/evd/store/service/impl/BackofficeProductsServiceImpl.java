@@ -1,9 +1,12 @@
 package br.com.evd.store.service.impl;
 
+import static br.com.evd.store.cache.CacheConstants.SERVICE_ON_MEMORY_CACHE;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import br.com.evd.store.model.dto.ProductCustomerViewDTO;
@@ -119,6 +122,7 @@ public class BackofficeProductsServiceImpl implements ProductsService {
 	}
 
 	@Override
+	@Cacheable(cacheNames = {SERVICE_ON_MEMORY_CACHE}, key = "#id", unless = "#result == null")
 	public ProductsModelDTO getProduct(long id) {
 
 		ProductsModelDTO product = productsRepository.getProduct(id);

@@ -1,5 +1,7 @@
 package br.com.evd.store.model.dto;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +15,10 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class UserAddressModelDTO {
+public final class UserAddressModelDTO implements Serializable {
+	
+	private static final long serialVersionUID = 8335582599060411199L;
+	
 	private long idAddress;
 	private long idUser;
 	private String streetName;
