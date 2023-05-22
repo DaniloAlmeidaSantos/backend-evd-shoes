@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 
 import br.com.evd.store.model.dto.CartProductRequestDTO;
 import br.com.evd.store.model.dto.ProductCustomerViewDTO;
+import br.com.evd.store.model.dto.SalesToUserDTO;
 import br.com.evd.store.model.dto.SellConfirmRequestDTO;
 
 @Service
 public interface ProductCartService {
 	List<ProductCustomerViewDTO> getCartProducts(List<CartProductRequestDTO> indentifiers);
-	boolean sellProduct(List<SellConfirmRequestDTO> request);
+	long sellProduct(List<SellConfirmRequestDTO> request);
+	List<SalesToUserDTO> getSalesToUser(long id);
 }

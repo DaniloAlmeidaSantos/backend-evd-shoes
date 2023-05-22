@@ -1,13 +1,17 @@
 package br.com.evd.store.service.impl;
 
+import static br.com.evd.store.cache.CacheConstants.SERVICE_ON_MEMORY_CACHE;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import br.com.evd.store.model.dto.CartProductRequestDTO;
 import br.com.evd.store.model.dto.ProductCustomerViewDTO;
+import br.com.evd.store.model.dto.SalesToUserDTO;
 import br.com.evd.store.model.dto.SellConfirmRequestDTO;
 import br.com.evd.store.repository.ProductsRepository;
 import br.com.evd.store.repository.SellProductRepository;
@@ -45,18 +49,36 @@ public class ProductCartServiceImpl implements ProductCartService {
 	}
 
 	@Override
-	public boolean sellProduct(List<SellConfirmRequestDTO> request) {
-		
-		for (SellConfirmRequestDTO dto : request) {
-			try {
-				log.info("[SELL PRODUCT] Selling product {} to user {} ", dto.getIdProduct(), dto.getIdUser());
-				sellProductRepository.sellProduct(dto);
-			} catch (Exception e) {
-				log.error("[ERROR SELL PRODUTCT] Error to selling product {} in datbase: {} ", dto.getIdProduct(), e.getMessage());
+	public long sellProduct(List<SellConfirmRequestDTO> request) {
+		try {
+			long idObtained = sellProductRepository.confimrSell(request.get(0));
+			
+			for (SellConfirmRequestDTO dto : request) {
+				try {
+					log.info("[SELL PRODUCT] Selling product {} to user {} ", dto.getIdProduct(), dto.getIdUser());
+					sellProductRepository.sellProduct(dto, idObtained);
+				} catch (Exception e) {
+					log.error("[ERROR SELL PRODUTCT] Error to selling product {} in datbase: {} ", dto.getIdProduct(), e.getMessage());
+				}
 			}
+			return idObtained;
+		} catch (Exception e) {
+			log.error("[ERROR SELL PRODUCT] Error to selling product to TB_SALE {} ", e.getMessage());
 		}
 		
-		return true;
+		return -1;
+	}
+
+	@Override
+	public List<SalesToUserDTO> getSalesToUser(long id) {
+		try {
+			log.info("[ORDERS] Getting orders to user {} ", id);
+			return sellProductRepository.getSalesToUser(id);
+		} catch (Exception e) {
+			log.error("[ERROR TO GET SALES] Error to get sales to user {} : {}", id, e.getMessage());
+		}
+		
+		return null;
 	} 	
 	
 	

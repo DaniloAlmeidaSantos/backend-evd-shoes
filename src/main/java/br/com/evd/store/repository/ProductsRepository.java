@@ -8,9 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static br.com.evd.store.cache.CacheConstants.SERVICE_ON_MEMORY_CACHE;
-
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import br.com.evd.store.model.dto.ProductCustomerViewDTO;

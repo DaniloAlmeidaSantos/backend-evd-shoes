@@ -5,14 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
 import br.com.evd.store.model.dto.CartProductRequestDTO;
 import br.com.evd.store.model.dto.ProductCustomerViewDTO;
+import br.com.evd.store.model.dto.SalesToUserDTO;
 import br.com.evd.store.model.dto.SellConfirmRequestDTO;
 import br.com.evd.store.service.ProductCartService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,13 +46,26 @@ public class ProductsCustomerController {
 
 	@PostMapping(value = "/confirm/sell", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<ApiDefaultResponseDTO> confirmSelling(@RequestBody List<SellConfirmRequestDTO> request) {
-		boolean isSelled = cartService.sellProduct(request);
+		long orderNum = cartService.sellProduct(request);
 
-		if (isSelled) {
-			return ResponseEntity.ok().body(new ApiDefaultResponseDTO("200", "Products saled success"));
+		if (orderNum > 0) {
+			return ResponseEntity.ok().body(new ApiDefaultResponseDTO("200", String.valueOf(orderNum)));
 		}
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to sell produtcts"));
 	}
+	
+	@GetMapping(value = "/orders", produces = "application/json")
+	public ResponseEntity<List<SalesToUserDTO>> getOrders(@RequestParam long id) {
+		
+		List<SalesToUserDTO> orders = cartService.getSalesToUser(id);
+		
+		if (orders.size() > 0) {
+			return ResponseEntity.ok().body(orders);
+		}
+		
+		return ResponseEntity.badRequest().body(null);
+	}
+	
 
 }

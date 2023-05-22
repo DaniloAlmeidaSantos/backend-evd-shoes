@@ -11,6 +11,7 @@ public class SellConfirmRequestDTO {
 	private int quantity;
 	private double totalPrice;
 	private long idAddress;
+	private String saleAddress;
 	private long idPayment;
 	private String status;
 }
