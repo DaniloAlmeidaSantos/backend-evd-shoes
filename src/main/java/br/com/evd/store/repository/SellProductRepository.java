@@ -61,22 +61,19 @@ public class SellProductRepository extends DataSourceRepositoryConfig {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("INSERT INTO TB_SALES_HISTORIC ");
-			sb.append(" (IDUSER, IDPRODUCT, SALE_QUANT_PRODUCTS, SALE_TOTAL_PRICE, ID_PAYMENT, ID_SALE) ");
-			sb.append(" VALUES (?, ?, ?, ?, ?, ?)");
+
+			sb.append("UPDATE TB_SALE ");
+			sb.append(" SET SALE_STATUS = ? ");
+			sb.append("WHERE ID_SALE = ?");
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString());
-			stmt.setLong(1, request.getIdUser());
-			stmt.setLong(2, request.getIdProduct());
-			stmt.setInt(3, request.getQuantity());
-			stmt.setDouble(4, request.getTotalPrice());
-			stmt.setLong(5, request.getIdPayment());
-			stmt.setLong(6, idSale);
+			stmt.setString(1, request.getStatus());
+			stmt.setLong(2, idSale);
 
 			int rowsAffected = stmt.executeUpdate();
 
 			if (rowsAffected > 0) {
-				log.info("[SALE PRODUCT] Product {} saled success.", request.getIdProduct());
+				log.info("[UPDATE SATUS] Product {} status {} updated success.", idSale, request.getStatus());
 				return true;
 			}
 		} catch (SQLException e) {

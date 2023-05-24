@@ -55,6 +55,18 @@ public class ProductsCustomerController {
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to sell produtcts"));
 	}
+	
+	@PutMapping(value = "/order/update", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<ApiDefaultResponseDTO> updateStatusOrder(@RequestParam long id, @RequestBody SellConfirmRequestDTO request) {
+		boolean isUpdate = cartService.updateStatusOrder(id, request);
+		
+		if (isUpdate) {
+			return ResponseEntity.ok(new ApiDefaultResponseDTO("200", "Order updated success!"));
+		}
+		
+		log.warn("[UPDATE STATUS] Error in update status to order {} ", id);
+		return ResponseEntity.badRequest().body(null);
+	}
 
 	@GetMapping(value = "/orders", produces = "application/json")
 	public ResponseEntity<List<SalesToUserDTO>> getOrders(@RequestParam long id) {

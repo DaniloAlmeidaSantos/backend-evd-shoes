@@ -15,4 +15,5 @@ public interface ProductCartService {
 	long sellProduct(List<SellConfirmRequestDTO> request);
 	List<SalesToUserDTO> getSalesToUser(Long id);
 	List<SalesToUserDTO> getSummaryOrder(long id);
+	boolean updateStatusOrder(long id, SellConfirmRequestDTO request);
 }

@@ -94,6 +94,19 @@ public class ProductCartServiceImpl implements ProductCartService {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public boolean updateStatusOrder(long id, SellConfirmRequestDTO request) {
+		
+		boolean isUpdate = sellProductRepository.updateStatus(request, id);
+		
+		if (isUpdate) {
+			log.info("[UPDATE ORDER] Order updated {} .", id);
+			return true;
+		}
+		
+		return false;
 	} 	
 	
 	
