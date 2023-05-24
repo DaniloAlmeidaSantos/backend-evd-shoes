@@ -21,5 +21,6 @@ public class SalesToUserDTO implements Serializable {
 	private double price;
 	private String date;
 	private String status;
-
+	private String saleAddress;
+	private double unitPrice;
 }

@@ -105,8 +105,7 @@ public class BackofficeProductsController {
 			return ResponseEntity.ok(response);
 		}
 		
-		return ResponseEntity.badRequest().body(null);
-		
+		return ResponseEntity.badRequest().body(null);	
 	}
-	
+
 }

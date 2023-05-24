@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,18 +55,40 @@ public class ProductsCustomerController {
 
 		return ResponseEntity.badRequest().body(new ApiDefaultResponseDTO("400", "Error to sell produtcts"));
 	}
-	
+
 	@GetMapping(value = "/orders", produces = "application/json")
 	public ResponseEntity<List<SalesToUserDTO>> getOrders(@RequestParam long id) {
-		
+
 		List<SalesToUserDTO> orders = cartService.getSalesToUser(id);
-		
+
 		if (orders.size() > 0) {
 			return ResponseEntity.ok().body(orders);
 		}
-		
+
 		return ResponseEntity.badRequest().body(null);
 	}
-	
+
+	@GetMapping(value = "/orders/stockist", produces = "application/json")
+	public ResponseEntity<List<SalesToUserDTO>> getOrdersToStockist() {
+		List<SalesToUserDTO> orders = cartService.getSalesToUser(null);
+
+		if (orders.size() > 0) {
+			return ResponseEntity.ok().body(orders);
+		}
+
+		return ResponseEntity.badRequest().body(null);
+	}
+
+	@GetMapping(value = "/orders/summary", produces = "application/json")
+	public ResponseEntity<List<SalesToUserDTO>> getSummaOrders(@RequestParam long id) {
+
+		List<SalesToUserDTO> order = cartService.getSummaryOrder(id);
+
+		if (order != null) {
+			return ResponseEntity.ok().body(order);
+		}
+
+		return ResponseEntity.badRequest().body(null);
+	}
 
 }

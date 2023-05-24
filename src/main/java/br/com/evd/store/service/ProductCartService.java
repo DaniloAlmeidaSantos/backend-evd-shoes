@@ -13,5 +13,6 @@ import br.com.evd.store.model.dto.SellConfirmRequestDTO;
 public interface ProductCartService {
 	List<ProductCustomerViewDTO> getCartProducts(List<CartProductRequestDTO> indentifiers);
 	long sellProduct(List<SellConfirmRequestDTO> request);
-	List<SalesToUserDTO> getSalesToUser(long id);
+	List<SalesToUserDTO> getSalesToUser(Long id);
+	List<SalesToUserDTO> getSummaryOrder(long id);
 }

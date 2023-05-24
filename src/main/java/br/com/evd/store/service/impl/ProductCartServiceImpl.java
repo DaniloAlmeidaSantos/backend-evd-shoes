@@ -70,12 +70,27 @@ public class ProductCartServiceImpl implements ProductCartService {
 	}
 
 	@Override
-	public List<SalesToUserDTO> getSalesToUser(long id) {
+	public List<SalesToUserDTO> getSalesToUser(Long id) {
 		try {
 			log.info("[ORDERS] Getting orders to user {} ", id);
 			return sellProductRepository.getSalesToUser(id);
 		} catch (Exception e) {
 			log.error("[ERROR TO GET SALES] Error to get sales to user {} : {}", id, e.getMessage());
+		}
+		
+		return null;
+	}
+
+	@Override
+	@Cacheable(cacheNames = {SERVICE_ON_MEMORY_CACHE}, key = "#id", unless = "#result == null")
+	public List<SalesToUserDTO> getSummaryOrder(long id) {
+		
+		try {
+			log.info("[SUMMARY] Getting summary to order num : {} ", id);
+			List<SalesToUserDTO> response = sellProductRepository.getSummary(id);
+			return response;
+		} catch (Exception e) {
+			log.error("[SUMMARY] Error to get summary: {} ", e.getMessage());
 		}
 		
 		return null;
