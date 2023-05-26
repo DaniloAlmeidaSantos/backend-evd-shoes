@@ -138,7 +138,6 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	@Cacheable(cacheNames = {SERVICE_ON_MEMORY_CACHE}, key = "#id", unless = "#result == null")
 	public UserAddressModelDTO getAddresses(long id) {
 		log.info("[ADDRESSES] Getting addresses to user id {} ", id);
 		List<UserAddressModelDTO> addresses = repository.getAddressList(id);
