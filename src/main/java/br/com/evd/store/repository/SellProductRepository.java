@@ -196,13 +196,14 @@ public class SellProductRepository extends DataSourceRepositoryConfig {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT ");
-			sb.append(
-					"	S.ID_SALE, I.FILE, P.NAMEPRODUCT, SH.SALE_QUANT_PRODUCTS, SH.SALE_TOTAL_PRICE, SH.SALE_DATE, S.SALE_STATUS, S.SALE_ADDRESS, P.COST ");
+			sb.append("	S.ID_SALE, I.FILE, P.NAMEPRODUCT, SH.SALE_QUANT_PRODUCTS, SH.SALE_TOTAL_PRICE, ");
+			sb.append(" SH.SALE_DATE, S.SALE_STATUS, S.SALE_ADDRESS, P.COST, S.SALE_FREIGHT, PM.PAYMENT_NAME ");
 			sb.append("FROM TB_SALE S ");
 			sb.append("	JOIN TB_SALES_HISTORIC SH ON SH.ID_SALE = S.ID_SALE ");
 			sb.append("	JOIN TBPRODUCTS P ON P.IDPRODUCT = SH.IDPRODUCT ");
 			sb.append(" JOIN TB_PRODUCTS_IMAGE I ON I.IDPRODUCT = P.IDPRODUCT AND I.FILEDEFAULT = 'S' ");
-			sb.append("WHERE SH.ID_SALE = ? ");
+			sb.append(" JOIN TB_MEANS_PAYMENT PM ON PM.ID_PAYMENT = SH.ID_PAYMENT ");
+			sb.append("WHERE S.ID_SALE = ? ");
 
 			stmt = connection.prepareStatement(sb.toString());
 			stmt.setLong(1, id);
@@ -220,6 +221,8 @@ public class SellProductRepository extends DataSourceRepositoryConfig {
 				dto.setStatus(rs.getString("SALE_STATUS"));
 				dto.setSaleAddress(rs.getString("SALE_ADDRESS"));
 				dto.setUnitPrice(rs.getDouble("COST"));
+				dto.setFreight(rs.getString("SALE_FREIGHT"));
+				dto.setPaymentMethod(rs.getString("PAYMENT_NAME"));
 				list.add(dto);
 			}
 		} catch (SQLException e) {

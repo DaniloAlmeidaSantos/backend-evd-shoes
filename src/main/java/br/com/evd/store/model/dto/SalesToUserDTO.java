@@ -19,6 +19,8 @@ public class SalesToUserDTO implements Serializable {
 	private String nameProduct;
 	private int quantity;
 	private double price;
+	private String freight;
+	private String paymentMethod;
 	private String date;
 	private String status;
 	private String saleAddress;
