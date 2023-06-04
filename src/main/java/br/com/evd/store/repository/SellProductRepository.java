@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import br.com.evd.store.model.dto.OrdersResponseDTO;
 import br.com.evd.store.model.dto.SalesToUserDTO;
 import br.com.evd.store.model.dto.SellConfirmRequestDTO;
 import br.com.evd.store.repository.config.DataSourceRepositoryConfig;
@@ -98,19 +99,20 @@ public class SellProductRepository extends DataSourceRepositoryConfig {
 			sb.append("INSERT INTO TB_SALE ");
 
 			if (request.getIdAddress() == 0) {
-				sb.append(" (SALE_STATUS, SALE_ADDRESS) ");
-				sb.append(" VALUES (?, ?)");
-			} else {
-				sb.append(" (SALE_STATUS, SALE_ADDRESS, ID_ADDRESS) ");
+				sb.append(" (SALE_STATUS, SALE_ADDRESS, SALE_FREIGHT) ");
 				sb.append(" VALUES (?, ?, ?)");
+			} else {
+				sb.append(" (SALE_STATUS, SALE_ADDRESS, SALE_FREIGHT, ID_ADDRESS) ");
+				sb.append(" VALUES (?, ?, ?, ?)");
 			}
 
 			PreparedStatement stmt = connection.prepareStatement(sb.toString(), Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, request.getStatus());
 			stmt.setString(2, request.getSaleAddress());
+			stmt.setString(3, request.getDeliveryCompany());
 
 			if (request.getIdAddress() != 0)
-				stmt.setLong(3, request.getIdAddress());
+				stmt.setLong(4, request.getIdAddress());
 
 			int rowsAffected = stmt.executeUpdate();
 
@@ -138,25 +140,23 @@ public class SellProductRepository extends DataSourceRepositoryConfig {
 		return -1;
 	}
 
-	public List<SalesToUserDTO> getSalesToUser(Long id) {
-		List<SalesToUserDTO> list = new ArrayList<>();
+	public List<OrdersResponseDTO> getSalesToUser(Long id) {
+		List<OrdersResponseDTO> list = new ArrayList<>();
 		PreparedStatement stmt = null;
 		try {
 			Connection connection = super.openConnection();
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT ");
-			sb.append(
-					"	S.ID_SALE, I.FILE, P.NAMEPRODUCT, SH.SALE_QUANT_PRODUCTS, SH.SALE_TOTAL_PRICE, SH.SALE_DATE, S.SALE_STATUS ");
+			sb.append("	S.ID_SALE, SH.SALE_TOTAL_PRICE, SH.SALE_DATE, S.SALE_STATUS, S.SALE_FREIGHT ");
 			sb.append("FROM TB_SALE S ");
 			sb.append("	JOIN TB_SALES_HISTORIC SH ON SH.ID_SALE = S.ID_SALE ");
-			sb.append("	JOIN TBPRODUCTS P ON P.IDPRODUCT = SH.IDPRODUCT ");
-			sb.append(" JOIN TB_PRODUCTS_IMAGE I ON I.IDPRODUCT = P.IDPRODUCT AND I.FILEDEFAULT = 'S' ");
 
 			if (id != null) {
 				sb.append("WHERE SH.IDUSER = ? ");
 			}
-
+			
+			sb.append(" GROUP BY SH.ID_SALE ");
 			sb.append(" ORDER BY SH.SALE_DATE DESC");
 
 			stmt = connection.prepareStatement(sb.toString());
@@ -167,14 +167,12 @@ public class SellProductRepository extends DataSourceRepositoryConfig {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				SalesToUserDTO dto = new SalesToUserDTO();
+				OrdersResponseDTO dto = new OrdersResponseDTO();
 				dto.setIdSale(rs.getLong("ID_SALE"));
-				dto.setDate(rs.getString("SALE_DATE"));
-				dto.setFile(rs.getString("FILE"));
-				dto.setNameProduct(rs.getString("NAMEPRODUCT"));
-				dto.setPrice(rs.getDouble("SALE_TOTAL_PRICE"));
-				dto.setQuantity(rs.getInt("SALE_QUANT_PRODUCTS"));
-				dto.setStatus(rs.getString("SALE_STATUS"));
+				dto.setOrderDate(rs.getString("SALE_DATE"));
+				dto.setTotalPrice(rs.getDouble("SALE_TOTAL_PRICE"));
+				dto.setOrderStatus(rs.getString("SALE_STATUS"));
+				dto.setFreight(rs.getString("SALE_FREIGHT"));
 				list.add(dto);
 			}
 		} catch (SQLException e) {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.evd.store.model.dto.ApiDefaultResponseDTO;
 import br.com.evd.store.model.dto.CartProductRequestDTO;
+import br.com.evd.store.model.dto.OrdersResponseDTO;
 import br.com.evd.store.model.dto.ProductCustomerViewDTO;
 import br.com.evd.store.model.dto.SalesToUserDTO;
 import br.com.evd.store.model.dto.SellConfirmRequestDTO;
@@ -69,20 +70,9 @@ public class ProductsCustomerController {
 	}
 
 	@GetMapping(value = "/orders", produces = "application/json")
-	public ResponseEntity<List<SalesToUserDTO>> getOrders(@RequestParam long id) {
+	public ResponseEntity<List<OrdersResponseDTO>> getOrders(@RequestParam(required = false) Long id) {
 
-		List<SalesToUserDTO> orders = cartService.getSalesToUser(id);
-
-		if (orders.size() > 0) {
-			return ResponseEntity.ok().body(orders);
-		}
-
-		return ResponseEntity.badRequest().body(null);
-	}
-
-	@GetMapping(value = "/orders/stockist", produces = "application/json")
-	public ResponseEntity<List<SalesToUserDTO>> getOrdersToStockist() {
-		List<SalesToUserDTO> orders = cartService.getSalesToUser(null);
+		List<OrdersResponseDTO> orders = cartService.getSalesToUser(id);
 
 		if (orders.size() > 0) {
 			return ResponseEntity.ok().body(orders);

@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import br.com.evd.store.model.dto.CartProductRequestDTO;
+import br.com.evd.store.model.dto.OrdersResponseDTO;
 import br.com.evd.store.model.dto.ProductCustomerViewDTO;
 import br.com.evd.store.model.dto.SalesToUserDTO;
 import br.com.evd.store.model.dto.SellConfirmRequestDTO;
@@ -70,7 +71,7 @@ public class ProductCartServiceImpl implements ProductCartService {
 	}
 
 	@Override
-	public List<SalesToUserDTO> getSalesToUser(Long id) {
+	public List<OrdersResponseDTO> getSalesToUser(Long id) {
 		try {
 			log.info("[ORDERS] Getting orders to user {} ", id);
 			return sellProductRepository.getSalesToUser(id);
@@ -82,7 +83,6 @@ public class ProductCartServiceImpl implements ProductCartService {
 	}
 
 	@Override
-	@Cacheable(cacheNames = {SERVICE_ON_MEMORY_CACHE}, key = "#id", unless = "#result == null")
 	public List<SalesToUserDTO> getSummaryOrder(long id) {
 		
 		try {
